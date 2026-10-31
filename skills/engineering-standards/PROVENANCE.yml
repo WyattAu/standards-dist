@@ -1,0 +1,4 @@
+source: WyattAu/engineering-standards
+rev: 14ffe9b
+vendored: [references/OMNI-CORE.md, references/DOC-STYLE.md]
+rebuilt: "2026-10-31 by skills/build.sh"

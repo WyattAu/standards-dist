@@ -1,0 +1,10 @@
+# standards-dist
+
+> Distributable projections of the WyattAu standards: two agent skills
+> (engineering + spec) and a read-only MCP server exposing the estate
+> gates. Projections per SC-11/11p; canons own truth.
+
+- skills/spec-standards: SPEC-CORE authoring/adoption skill + gate scripts
+- skills/engineering-standards: OMNI-CORE scaffold/tier/audit skill
+- mcp/standards_mcp.py: doc_lint, spec_audit, conformance_checklist, estate_status
+- build.sh: rebuild + freshness check (--check)
