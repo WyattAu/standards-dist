@@ -80,3 +80,8 @@ A frozen document is append-only; a superseded document keeps its original
 text visible and points at its successor. `doc-lint.sh` fails on a
 `FROZEN` stamp without a date and on a `SUPERSEDED` stamp without a
 successor pointer.
+
+   A repository may scope the gate further with a `.doclint-exclude`
+   file at its root (one directory name per line; entries match as
+   directory basenames): product content such as generated skill
+   definitions is upstream-contracted text, not estate documentation.

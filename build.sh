@@ -26,6 +26,13 @@ SREV=$(pin "$SPEC_CANON"); EREV=$(pin "$ENG_CANON")
 cp "$SPEC_CANON/SPEC-CORE.md" "$SPEC_CANON/DOC-STYLE.md" skills/spec-standards/references/
 cp "$SPEC_CANON/scripts/doc-lint.sh" "$SPEC_CANON/scripts/spec-audit.py" skills/spec-standards/scripts/
 cp "$ENG_CANON/OMNI-CORE.md" "$ENG_CANON/DOC-STYLE.md" skills/engineering-standards/references/
+STANDARDS_CANON="${STANDARDS_CANON:-$HOME/dev/src/standards}"
+STDREV=$(pin "$STANDARDS_CANON")
+cp "$STANDARDS_CANON/standards/PRESENT.md" skills/present/references/
+cp "$STANDARDS_CANON/standards/AGENTSPEAK.md" skills/agentspeak/references/
+for f in present agentspeak; do
+  sed -i "s/^rev: .*/rev: $STDREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/$f/PROVENANCE.yml
+done
 sed -i "s/^rev: .*/rev: $SREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/spec-standards/PROVENANCE.yml
 sed -i "s/^rev: .*/rev: $EREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/engineering-standards/PROVENANCE.yml
-echo "rebuilt projections (spec=$SREV eng=$EREV)"
+echo "rebuilt projections (spec=$SREV eng=$EREV standards=$STDREV)"

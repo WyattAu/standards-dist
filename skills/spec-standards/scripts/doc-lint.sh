@@ -22,6 +22,17 @@ skip()    { echo "SKIP: $*"; }
 
 EM=$(printf '\342\200\224')   # the em-dash character, constructed not typed
 
+# Repo-level scope excludes (.doclint-exclude, one directory name per
+# line): product content and vendored trees are not estate docs. Entries
+# are matched as directory basenames by grep/find.
+EXTRA_EXCLUDES=""
+if [ -f .doclint-exclude ]; then
+  while IFS= read -r entry; do
+    entry=$(echo "$entry" | tr -d '[:space:]')
+    [ -n "$entry" ] && case "$entry" in \#*) ;; *) EXTRA_EXCLUDES="$EXTRA_EXCLUDES --exclude-dir=$entry";; esac
+  done < .doclint-exclude
+fi
+
 # Dated advisory windows (README matrix): gates escalate to blocking
 # automatically on their date. No manual flip, nothing to forget.
 TODAY=$(date +%Y%m%d)
@@ -31,7 +42,7 @@ SEV_KD="advisory"; [ "$TODAY" -ge "$WINDOW_2027_04" ] && SEV_KD="fail"
 SEV_0101="advisory"; [ "$TODAY" -ge "$WINDOW_2027_01" ] && SEV_0101="fail"
 
 # --- 1. Character rule (DOC-STYLE §1): no em-dash in any Markdown -------
-HITS=$(grep -rIn --include='*.md' "$EM" . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=dist 2>/dev/null || true)
+HITS=$(grep -rIn --include='*.md' "$EM" . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=dist $EXTRA_EXCLUDES 2>/dev/null || true)
 if [ -n "$HITS" ]; then
   fail "em-dash present (DOC-STYLE §1); first offenders:"
   echo "$HITS" | head -5
@@ -39,7 +50,7 @@ fi
 
 # --- 2. Status stamps (SPEC-CORE §5): FROZEN needs a date,
 #        SUPERSEDED needs a successor -------------------------------------
-STAMP_LINES=$(grep -rhE 'Status:.*(FROZEN|SUPERSEDED)' --include='*.md' . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=dist 2>/dev/null || true)
+STAMP_LINES=$(grep -rhE 'Status:.*(FROZEN|SUPERSEDED)' --include='*.md' . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=dist $EXTRA_EXCLUDES 2>/dev/null || true)
 while IFS= read -r LINE; do
   [ -z "$LINE" ] && continue
   case "$LINE" in
@@ -108,13 +119,13 @@ if [ "$TIER" = "s" ]; then
       fail "$F: no 'Oracle:' or 'No-oracle:' line (SPEC-CORE §6)"
     fi
   done <<EOF5
-$(find . -name 'SPEC*.md' -not -path './.git/*' -not -path '*/node_modules/*' -not -path '*/vendor/*' -not -path '*/dist/*' 2>/dev/null)
+$(find . -name 'SPEC*.md' -not -path './.git/*' -not -path '*/node_modules/*' -not -path '*/vendor/*' -not -path '*/dist/*' $EXTRA_FIND 2>/dev/null)
 EOF5
 fi
 
 # --- 6. REQ cross-check (SPEC-CORE §4): advisory ------------------------
 if [ "$TIER" = "s" ] || [ "$REQ_CHECK" -eq 1 ]; then
-  SPECS=$(find . -name 'SPEC*.md' -not -path './.git/*' -not -path '*/node_modules/*' -not -path '*/vendor/*' -not -path '*/dist/*' 2>/dev/null || true)
+  SPECS=$(find . -name 'SPEC*.md' -not -path './.git/*' -not -path '*/node_modules/*' -not -path '*/vendor/*' -not -path '*/dist/*' $EXTRA_FIND 2>/dev/null || true)
   SPEC_REQS=$(grep -rhoE 'REQ-[A-Z][A-Z0-9]*-[0-9]{3}' $SPECS 2>/dev/null | sort -u || true)
   CODE_REQS=$(grep -rhoE 'REQ-[A-Z][A-Z0-9]*-[0-9]{3}' \
     --include='*.py' --include='*.rs' --include='*.sh' --include='*.hs' \
@@ -144,6 +155,7 @@ md_fail() {
 run_lint() {  # $1 = command...; findings on stdout+stderr, rc: 0 clean, 124 timeout, other = findings
   timeout "${MD_TIMEOUT:-120}" "$@" 2>&1
 }
+EXTRA_FIND=""  # find-based SPEC discovery keeps built-in prunes only
 lint_one() {  # $@ = linter argv
   OUT=$(run_lint "$@"); rc=$?
   if [ $rc -eq 124 ]; then

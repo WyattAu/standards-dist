@@ -34,6 +34,18 @@ TT_HEADING = "## Where the truth lives"
 PLACEHOLDER_RE = re.compile(r"\b(TODO|PLACEHOLDER|TBD|FIXME)\b")
 
 
+
+def excluded_parts(root: Path) -> set:
+    """Built-in + repo-level (.doclint-exclude, one dir name per line)."""
+    parts = {".git", "node_modules", "vendor", "dist"}
+    ex = root / ".doclint-exclude"
+    if ex.exists():
+        for line in ex.read_text(encoding="utf-8").split("\n"):
+            line = line.strip()
+            if line and not line.startswith("#"):
+                parts.add(line.split("/")[0])
+    return parts
+
 def git_time(path: Path) -> int:
     """Last commit touching path, as unix seconds; 0 when unavailable."""
     try:
@@ -94,7 +106,7 @@ def audit_repo(root: Path, tier: str, strict_freshness: bool) -> int:
     # oracle lines (§6, tier S)
     if tier == "s":
         for f in sorted(root.rglob("SPEC*.md")):
-            if any(x in f.parts for x in (".git", "node_modules", "vendor", "dist")):
+            if any(x in f.parts for x in excluded_parts(root)):
                 continue
             body = f.read_text(encoding="utf-8", errors="replace")
             if "Oracle:" not in body and "No-oracle" not in body:
@@ -119,7 +131,7 @@ def audit_repo(root: Path, tier: str, strict_freshness: bool) -> int:
     )
     if llms.exists() and contract is not None:
         watched = sorted(root.rglob("SPEC*.md")) + [contract]
-        watched = [f for f in watched if not any(x in f.parts for x in (".git", "node_modules", "vendor", "dist"))]
+        watched = [f for f in watched if not any(x in f.parts for x in excluded_parts(root))]
         newest = max((git_time(f) for f in watched), default=0)
         mine = git_time(llms)
         if newest and mine and mine < newest:
