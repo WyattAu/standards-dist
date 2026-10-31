@@ -1,0 +1,26 @@
+{
+ "updated": "see git history",
+ "skills": {
+  "agentspeak": {
+   "chars": 4496,
+   "files": 2,
+   "est_tokens": 1124
+  },
+  "engineering-standards": {
+   "chars": 10518,
+   "files": 3,
+   "est_tokens": 2630
+  },
+  "present": {
+   "chars": 4157,
+   "files": 2,
+   "est_tokens": 1039
+  },
+  "spec-standards": {
+   "chars": 37587,
+   "files": 5,
+   "est_tokens": 9397
+  }
+ },
+ "total_est_tokens": 14190
+}

@@ -1,0 +1,20 @@
+{
+  "name": "standards-dist",
+  "owner": {
+    "name": "Wyatt Au"
+  },
+  "metadata": {
+    "description": "WyattAu estate standards: verified, fresh, token-measured agent skills + read-only MCP server"
+  },
+  "plugins": [
+    {
+      "name": "wyattau-standards-pack",
+      "source": "./",
+      "description": "Four estate-standard skills (spec authoring, engineering conformance, presentable text, agent speech) plus a read-only standards MCP server. Projections with pinned provenance (SC-11): stale projections fail the canon gate.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Wyatt Au"
+      }
+    }
+  ]
+}

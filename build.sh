@@ -9,6 +9,30 @@ ENG_CANON="${ENG_CANON:-/tmp/opencode/rollout/eng}"
 
 pin() { git -C "$1" rev-parse --short HEAD; }
 
+if [ "${1:-}" = "--diff" ]; then
+  # machine-readable drift: what changed between each skill's pinned rev and
+  # the canon head (the diff the MCP drift research says registries lack).
+  out="["; first=1
+  for skill in skills/*/; do
+    prov="$skill/PROVENANCE.yml"
+    [ -f "$prov" ] || continue
+    pinned=$(awk '/^rev:/{print $2}' "$prov")
+    src_repo=$(awk '/^source:/{print $2}' "$prov")
+    tmp=$(mktemp -d)
+    git clone --quiet --filter=blob:none "https://github.com/${src_repo}.git" "$tmp" 2>/dev/null || { echo "[]"; exit 0; }
+    head=$(git -C "$tmp" rev-parse --short HEAD)
+    if [ "$pinned" != "$head" ]; then
+      files=$(git -C "$tmp" diff --name-only "$pinned" "$head" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read().split()))')
+      [ $first -eq 0 ] && out="$out,"
+      first=0
+      out="$out{"skill":"${skill#skills/}","pinned":"$pinned","head":"$head","changed_files":$files}"
+    fi
+    rm -rf "$tmp"
+  done
+  echo "$out]"
+  exit 0
+fi
+
 if [ "${1:-}" = "--check" ]; then
   stale=0
   for skill in skills/*/; do

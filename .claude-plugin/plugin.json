@@ -1,0 +1,9 @@
+{
+  "name": "wyattau-standards-pack",
+  "description": "WyattAu estate standards as agent skills + a read-only standards MCP server. Verified projections of the engineering-standards, spec-standards and standards canons.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Wyatt Au"
+  },
+  "license": "Apache-2.0"
+}
