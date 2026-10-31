@@ -1,0 +1,20 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  projections:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: SC-11 freshness (stale projections fail)
+        run: ./build.sh --check
+      - name: token benchmark (AGENTSPEAK: tokens are the budget)
+        run: python3 scripts/token_benchmark.py
+      - name: register gate (estate voice-lint, strict)
+        run: |
+          git clone --quiet --depth 1 https://github.com/WyattAu/standards.git standards-canon
+          python3 standards-canon/scripts/voice-lint.py --strict .
