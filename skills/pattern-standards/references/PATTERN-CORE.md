@@ -1,8 +1,8 @@
 # PATTERN-CORE; the WyattAu design-pattern canon
 
-Status: CURRENT, 2026-11. 107 patterns in three series, 8 named
-refusals, a 24-pattern baseline tier. Projection source for the future
-`estate-patterns` skill; consumable directly with `references/`.
+Status: CURRENT, 2026-11. 120 patterns in three series, 8 named
+refusals, a 25-pattern baseline tier. Projection source for the
+`wyattau-patterns` skill; consumable directly with `references/`.
 
 ## 1. Doctrine
 
@@ -42,11 +42,12 @@ computational model, the time model, or the mathematical invariants.
 
 Field-series domains: `field-fullstack.md` (P1–P10), `field-numerical.md`
 (P11–P20), `field-concurrency.md` (P21–P30), `field-agentic.md`
-(P31–P40), `field-security.md` (P41–P50). Foundations domains:
-types/algebra (T1–T10), execution/reactive (T11–T20), state/time
-(T21–T30), distributed (T31–T42), interfaces/security/AI (T43–T50).
-Pattern selection per task type is a graph traversal, not a choice:
-§9 and `references/decision-graph.md`.
+(P31–P40), `field-security.md` (P41–P50), `field-operations.md`
+(P51–P54, P62–P63), `field-data-evolution.md` (P55–P61). Foundations
+domains: types/algebra (T1–T10), execution/reactive (T11–T20),
+state/time (T21–T30), distributed (T31–T42), interfaces/security/AI
+(T43–T50). Pattern selection per task type is a graph traversal, not a
+choice: §9 and `references/decision-graph.md`.
 
 ## 3. Baseline tier
 
@@ -74,6 +75,7 @@ Deviations need an ADR.
 | P12 | Dimensional algebra | quant/accounting kernels |
 | P23 | `AbortScope` guards | long-lived processes |
 | P24 | Success-refilled retry budgets | HTTP clients |
+| P51 | Circuit breaker | outbound clients |
 | P31 | Prompt quarantine | agents reading external text |
 | P35 | Prefix-pinned KV-cache layouts | multi-turn agents |
 | P39 | Inference memoization | multi-stage pipelines |
@@ -218,6 +220,19 @@ A standard that only lists virtues is not a standard.
 | P48 | Layering fitness gates | boundary erosion | Proven |
 | P49 | Impact test fingerprinting | O(N) CI suites | Emerging |
 | P50 | Hermetic synthetic twins | mock-vs-prod skew | Emerging |
+| P51 | Circuit breaker | cascading outage burn | Proven |
+| P52 | Bulkhead isolation | shared-pool starvation | Proven |
+| P53 | Dead-letter quarantine | poison-message blocking | Proven |
+| P54 | Webhook receiver hardening | forged/replayed deliveries | Proven |
+| P55 | Optimistic concurrency | lost updates | Proven |
+| P56 | Checkpointed backfill | restart-amplified backfills | Proven |
+| P57 | Consumer contract tests | silent provider breakage | Proven |
+| P58 | Strangler fig migration | big-bang rewrites | Proven |
+| P59 | Anti-corruption layer | legacy model leakage | Proven |
+| P60 | Time-ordered identifiers | index-hostile IDs | Proven |
+| P61 | Bucketed rollups + retention | raw-scan dashboards | Proven |
+| P62 | Graceful drain | dropped in-flight work | Proven |
+| P63 | Trace-context propagation | uncorrelatable traces | Proven |
 
 ## 8. Catalog; Frontier (X1–X7)
 
@@ -258,6 +273,9 @@ obey its REFUSE edges. Full algorithm and edges:
 | N16 | Replicated / distributed state | T33, T34, T38 |
 | N17 | New repo / module skeleton | T13, T11, P48 + §3 baseline |
 | N18 | Rate limiting / load control | T35, P27 |
+| N19 | Inbound webhook receiver | P54 |
+| N20 | Backfill / bulk data job | P56 |
+| N21 | Risky release / rewrite | P58 |
 
 Two nodes apply to one task: union the MANDATORY sets and answer both
 ASK chains. Unknown ASK predicate: ask the user; never guess.

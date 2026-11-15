@@ -1,14 +1,13 @@
 ---
 name: wyattau-patterns
 description: |
-  Route design decisions through the WyattAu pattern canon: 107 constructs,
-  8 refusals, 24 baseline-tier defaults. Use when choosing or reviewing
-  architecture, data flow, or API design; when a failure mode names its
-  pattern (N+1, race, deadlock, IDOR, pagination drift, penny rounding,
-  retry storm, agent loops, prompt injection); or on "which pattern
-  for X". Does not: UI aesthetics (estate-design), debugging
-  (estate-rigor-loop), SEO (estate-seo), repo scaffolding
-  (wyattau-engineering-standards).
+  Route design decisions through the WyattAu pattern canon: 120 constructs,
+  8 refusals, 25 baseline-tier defaults, and a 21-node task graph that
+  picks patterns for you. Use when choosing or reviewing architecture,
+  data flow, or API design; when a failure mode names its pattern
+  (N+1, race, deadlock, IDOR, penny rounding, retry storm, prompt
+  injection); or on "which pattern for X". Does not: UI aesthetics
+  (estate-design), debugging (estate-rigor-loop), SEO (estate-seo).
 allowed-tools: read, grep, bash
 license: Apache-2.0
 ---
@@ -37,7 +36,8 @@ default-adopt where domain applies), **P** field constructs P1–P50
    call, N06 cache, N07 HTTP client, N08 worker pool, N09 scheduler,
    N10 authz, N11 telemetry, N12 config/flags, N13 migration, N14
    client state, N15 numerical kernel, N16 distributed state, N17 repo
-   skeleton, N18 load control).
+   skeleton, N18 load control, N19 webhook receiver, N20 backfill job,
+   N21 risky release).
 2. Open `references/decision-graph.md` at that node. Its MANDATORY set,
    ASK branches, and REFUSE edges are the design; do not weigh
    alternatives. An ASK predicate you cannot answer from the task
@@ -58,6 +58,12 @@ default-adopt where domain applies), **P** field constructs P1–P50
 | Cache staleness, untestable faults | `references/field-concurrency.md` | P21, P29 |
 | Agent loops, spend blowups, prompt injection | `references/field-agentic.md` | P31–P40 |
 | IDOR, log noise, undeletable PII, config tears | `references/field-security.md` | P41–P43, P47 |
+| Down dependency down, one pool starving all | `references/field-operations.md` | P51, P52 |
+| Poisoned queue, forged webhooks, dropped deploys | `references/field-operations.md` | P53, P54, P62 |
+| Traces that will not correlate | `references/field-operations.md` | P63 |
+| Lost updates between concurrent writers | `references/field-data-evolution.md` | P55 |
+| Backfills, ID strategy, scan-heavy dashboards | `references/field-data-evolution.md` | P56, P60, P61 |
+| Provider broke consumers; legacy rewrite | `references/field-data-evolution.md` | P57–P59 |
 | Distributed consistency, tail latency | `references/foundations-distributed.md` | T31–T42 |
 | Event history, audit, time-travel queries | `references/foundations-state.md` | T21–T30 |
 | LLM output validation, agent writes | `references/foundations-interfaces.md` | T48–T50 |
@@ -69,8 +75,9 @@ Full catalog tables with maturity stamps: PATTERN-CORE §6–§8.
 ## Baseline tier (default-adopt where domain applies)
 
 T1, T11, T13, T19, T27, T32, T33, T36, T43, T48, T49, T50, P4, P7,
-P8, P11, P12, P23, P24, P31, P35, P39, P41, P42. Omitting one needs an
-ADR stating why the failure mode cannot occur (PATTERN-CORE §5).
+P8, P11, P12, P23, P24, P31, P35, P39, P41, P42, P51. Omitting one
+needs an ADR stating why the failure mode cannot occur (PATTERN-CORE
+§5).
 
 ## Refusals (short form; full table in PATTERN-CORE §4)
 

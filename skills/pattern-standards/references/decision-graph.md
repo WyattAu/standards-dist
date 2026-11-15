@@ -45,6 +45,9 @@ a guess.
 | N16 | Replicated / distributed state | T33, T34, T38 | §N16 |
 | N17 | New repo / module skeleton | T13, T11, P48 | §N17 |
 | N18 | Rate limiting / load control | T35, P27 | §N18 |
+| N19 | Inbound webhook receiver | P54 | §N19 |
+| N20 | Backfill / bulk data job | P56 | §N20 |
+| N21 | Risky release / rewrite | P58 | §N21 |
 
 ## Edges per node
 
@@ -61,6 +64,7 @@ event per request), P47 (config epoch pinned at ingress).
 **ASK.** Money fields? extend to N03. PII in payload? add P4 (redaction)
 and P43 (shredding if stored append-only). Downstream retry-exposed
 calls? add P24 on the client side. Events emitted? add T32 (outbox).
+Concurrent writers on the same entity? add P55 (optimistic concurrency).
 **REFUSE.** Fire-and-forget writes that skip the outbox: route through
 N04's T32 or do not emit.
 
@@ -104,12 +108,14 @@ authoritative writes.
 
 ### N07 · Outbound HTTP client
 **MANDATORY.** P24 (success-refilled retry budget), T33 downstream
-(idempotency on every retried endpoint).
+(idempotency on every retried endpoint), P51 (circuit breaker per
+dependency).
 **ASK.** Tail-latency-sensitive reads? add T39 (hedged requests).
 Business tiers exist? add P27 (criticality propagation). Parses
 third-party content? add P46 (capability manifest around the parser).
+Multiple dependencies sharing one pool? add P52 (bulkhead partition).
 **REFUSE.** Unbounded exponential backoff; retries on non-idempotent
-endpoints without T33.
+endpoints without T33; bare HTTP calls with no breaker state.
 
 ### N08 · Multi-tenant worker pool
 **MANDATORY.** P22 (weighted DRR fairness), P23 (AbortScope teardown),
@@ -139,11 +145,11 @@ new repositories constructed without a tenant capability.
 
 ### N11 · Telemetry setup
 **MANDATORY.** P42 (wide events), P45 (burn-rate paging for the
-service).
+service), P63 (trace-context propagation on every hop).
 **ASK.** Latency-critical daemon? add P30 (ring-buffer recorder). PII
 can reach traces? add P4 and P43.
 **REFUSE.** Scatter-shot `logger.info` as the primary observability;
-static threshold paging.
+static threshold paging; logs that cannot be joined by one trace ID.
 
 ### N12 · Config / feature flags
 **MANDATORY.** P47 (epoch-pinned config snapshots). Flags specifically:
@@ -159,6 +165,8 @@ that are really configuration (route to P47).
 expand-contract shape.
 **ASK.** Ledger or accounting data? add P19 (checksum diff oracle).
 Event-sourced store? project rebuild (T21) instead of row migration.
+Replacing a legacy path end to end? extend to N21 (P58 strangler, P59
+adapter at the seam).
 **REFUSE.** Big-bang cutover without parity evidence; migrations
 without a tested rollback.
 
@@ -206,6 +214,48 @@ counterpart? add P24 (retry budgets).
 **REFUSE.** Static thresholds as the only control; criticality
 vocabularies where everything is P0 (R8).
 
+### N19 · Inbound webhook receiver
+**MANDATORY.** P54 (signature verify, persist-then-process, dedupe on
+delivery ID).
+**ASK.** Consumer needs current state more than event order? add P9
+semantics (re-pull on ping). Payload feeds projections? add T32 (the
+stored payload rides the outbox). Payload feeds an agent? add P31
+(untrusted input).
+**REFUSE.** Trusting sender claims without signature verification;
+processing inline inside the HTTP handler; state mutations keyed on
+delivery order.
+
+### N20 · Backfill / bulk data job
+**MANDATORY.** P56 (idempotent units, checkpoint table, pacing).
+**ASK.** Backfill accompanies a rewrite? add N13 (P6 parity gate).
+Verifying ledger-shaped data? add P19 (checksum pass). Multi-tenant
+tables? pace within P22 fairness so the backfill is just another tenant.
+**REFUSE.** Unbounded `UPDATE` loops with no checkpoint; backfills on
+hot tables without batching and pacing; non-idempotent backfill steps.
+
+### N21 · Risky release / rewrite
+**MANDATORY.** P58 (strangler fig: intercept at a seam, slice by
+slice, per-slice rollback).
+**ASK.** Legacy model at the boundary? add P59 (anti-corruption
+adapter) and P1 (compatibility lenses). Data parity between old and
+new? add P6 (shadow parity) per slice. Routing switches? carry P44
+expiries so the scaffolding dies on a date.
+**REFUSE.** Big-bang cutover; parallel-run scaffolding with no expiry;
+a strangler with no traffic seam (if you cannot intercept, you cannot
+safely rewrite).
+
+## Worked chains
+
+Common task shapes pre-resolved through the union rule; use them as
+calibration for the traversal.
+
+| Task statement | Nodes | Emitted set (beyond shared mandatory) |
+|---|---|---|
+| "Split a restaurant bill among friends, store shares, charge retry-safe" | N03 + N02 | T1, T33, P42, P47, T27, P11, P12; plus P24 + P51 on the payment call (N07) |
+| "Agent reads support emails and issues refunds" | N05 + N04 + N03 | T48, T50, P33, P37, P31 (emails are untrusted), T31, T32, T19, P36 (refund needs approval diff), T27 + P11 ledger entries |
+| "Paginated admin table over a multi-tenant audit log" | N01 + N10 | P7, T8, P41; plus P43 if PII is stored, P4 on render |
+| "Rewrite the billing ingest path" | N13 + N21 | P6, P19 (ledger checksums), P58, P59 at the legacy seam, P44 expiries on routing flags |
+
 ## Overview
 
 ```mermaid
@@ -229,7 +279,10 @@ graph TD
   CLS --> N16[N16 distributed state]
   CLS --> N17[N17 repo skeleton]
   CLS --> N18[N18 load control]
-  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
+  CLS --> N19[N19 webhook receiver]
+  CLS --> N20[N20 backfill job]
+  CLS --> N21[N21 risky release]
+  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
 ```
 
 ## Maintenance rules
