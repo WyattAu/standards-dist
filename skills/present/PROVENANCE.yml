@@ -1,4 +1,4 @@
 source: WyattAu/standards
 rev: bfe7d01
 vendored: [references/PRESENT.md, scripts/voice-lint.py]
-rebuilt: "2026-11-15T03:09:39Z by build.sh"
+rebuilt: "2026-11-15T03:19:56Z by build.sh"

@@ -51,6 +51,9 @@ a guess.
 | N22 | Test suite design | P64, P68 | §N22 |
 | N23 | API surface design | P72 | §N23 |
 | N24 | Deploy / release a service | P79 | §N24 |
+| N25 | PII store / processing | P4, P43 | §N25 |
+| N26 | Trading execution | P17, P20, P92 | §N26 |
+| N27 | Secrets & identity | P84, P85 | §N27 |
 
 ## Edges per node
 
@@ -280,6 +283,40 @@ cohorts via P44 flags).
 canaries without automated analysis (a manual canary is a lottery);
 shadow traffic with ungated side effects.
 
+### N25 · PII store / processing
+**MANDATORY.** P4 (redaction on every egress), P43 (per-entity DEKs so
+deletion is a key drop).
+**ASK.** Subject export requests in scope? add P81 (DSAR pipeline).
+Consent-gated purposes? add P80 (consent facts) and P82 (purpose
+tags). Audit requirements? add P83 (hash chain). Analytics feeds on
+PII-bearing tables? add P82 before the first feed ships.
+**REFUSE.** PII without a purpose tag reaching analytics or training;
+manual queries as the DSAR answer; plaintext PII in append-only
+stores without a DEK.
+
+### N26 · Trading execution
+**MANDATORY.** P17 (risk tokens before submission), P20 (replay
+envelope for live and historical), P92 (kill switch wired into every
+order path).
+**ASK.** Parent orders large relative to venue liquidity? add P87
+(slicing). Multi-venue? add P88 (routing by effective cost). Broker on
+the other side? add P89 (fill reconciliation) and P90 (slippage
+benchmarks). Venue data feeds? add P91 (budget adaptation).
+**REFUSE.** Order paths without a halt check (N26 does not exist
+without P92); single-clip parent orders on thin venues; positions
+adjusted from unreconciled fills.
+
+### N27 · Secrets & identity
+**MANDATORY.** P84 (workload identity for service-to-service), P85
+(rotation path with overlap window).
+**ASK.** Incident access needed? add P86 (break-glass; and retire any
+standing admin credential it replaces). External static secrets
+remain? broker through a vault with audit. Audit-chain requirements?
+add P83 for the access records.
+**REFUSE.** Shared static secrets in environment variables (R4
+adjacent: ambient authority); credentials without a rotation path;
+admin access without expiry or audit.
+
 ## Worked chains
 
 Common task shapes pre-resolved through the union rule; use them as
@@ -321,7 +358,10 @@ graph TD
   CLS --> N22[N22 test suite]
   CLS --> N23[N23 API surface]
   CLS --> N24[N24 deploy/release]
-  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 & N22 & N23 & N24 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
+  CLS --> N25[N25 PII processing]
+  CLS --> N26[N26 trading execution]
+  CLS --> N27[N27 secrets/identity]
+  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 & N22 & N23 & N24 & N25 & N26 & N27 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
 ```
 
 ## Maintenance rules

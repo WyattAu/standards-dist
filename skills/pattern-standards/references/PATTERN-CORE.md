@@ -1,6 +1,6 @@
 # PATTERN-CORE; the WyattAu design-pattern canon
 
-Status: CURRENT, 2026-11. 136 patterns in three series, 8 named
+Status: CURRENT, 2026-11. 149 patterns in three series, 8 named
 refusals, a 25-pattern baseline tier. Projection source for the
 `wyattau-patterns` skill; consumable directly with `references/`.
 
@@ -45,7 +45,8 @@ Field-series domains: `field-fullstack.md` (P1–P10), `field-numerical.md`
 (P31–P40), `field-security.md` (P41–P50), `field-operations.md`
 (P51–P54, P62–P63), `field-data-evolution.md` (P55–P61),
 `field-testing.md` (P64–P69), `field-api.md` (P70–P74),
-`field-deployment.md` (P75–P79). Foundations
+`field-deployment.md` (P75–P79), `field-compliance.md` (P80–P86),
+`field-execution.md` (P87–P92). Foundations
 domains: types/algebra (T1–T10), execution/reactive (T11–T20),
 state/time (T21–T30), distributed (T31–T42), interfaces/security/AI
 (T43–T50). Pattern selection per task type is a graph traversal, not a
@@ -251,6 +252,19 @@ A standard that only lists virtues is not a standard.
 | P77 | Shadow traffic | first-real-input rewrites | Proven |
 | P78 | Progressive exposure cohorts | flag-flip casualties | Proven |
 | P79 | Content-addressed artifacts | rebuild-and-pray deploys | Proven |
+| P80 | Consent state machine | unanswerable consent queries | Proven |
+| P81 | DSAR export pipeline | archaeology-per-request | Proven |
+| P82 | Purpose-limitation tagging | invisible purpose creep | Emerging |
+| P83 | Hash-chained audit log | editable audit history | Proven |
+| P84 | Workload identity | shared static secrets | Proven |
+| P85 | Zero-downtime rotation | deferred rotations | Proven |
+| P86 | Break-glass access | standing admin creds | Proven |
+| P87 | Order slicing (TWAP/VWAP) | single-clip market impact | Proven |
+| P88 | Smart order routing | worse-than-available fills | Proven |
+| P89 | Fill reconciliation | month-end break discovery | Proven |
+| P90 | Slippage benchmarking (TCA) | hidden execution cost | Proven |
+| P91 | Data-budget adaptation | burst disconnects | Proven |
+| P92 | Kill switch | unstoppable rogue orders | Proven |
 
 ## 8. Catalog; Frontier (X1–X7)
 
@@ -297,6 +311,9 @@ obey its REFUSE edges. Full algorithm and edges:
 | N22 | Test suite design | P64, P68 |
 | N23 | API surface design | P72 |
 | N24 | Deploy / release a service | P79 |
+| N25 | PII store / processing | P4, P43 |
+| N26 | Trading execution | P17, P20, P92 |
+| N27 | Secrets & identity | P84, P85 |
 
 Two nodes apply to one task: union the MANDATORY sets and answer both
 ASK chains. Unknown ASK predicate: ask the user; never guess.
