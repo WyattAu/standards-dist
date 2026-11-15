@@ -121,11 +121,7 @@ needs an ADR stating why the failure mode cannot occur (PATTERN-CORE
 
 ## Anti-patterns
 
-- Hand-editing `references/` here; it is a projection; edit the canon
-  and rerun `standards-dist/build.sh` (SC-11).
-- Citing a pattern ID that does not resolve; grep the ID in the canon
-  before referencing it.
-- Reaching for X-series constructs in production paths without a
-  completed pilot ADR.
-- Treating maturity stamps as endorsements: `Speculative` means watch,
-  not adopt.
+- Hand-editing `references/` here; edit the canon, rerun `build.sh` (SC-11).
+- Citing an ID that does not resolve; grep the canon first.
+- X-series constructs in production without a completed pilot ADR.
+- Maturity stamps are not endorsements; `Speculative` means watch.
