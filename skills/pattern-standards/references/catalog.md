@@ -156,6 +156,16 @@ file is the lookup table. Updated together with the reference files
 | P90 | Slippage benchmarking (TCA) | hidden execution cost | Proven |
 | P91 | Data-budget adaptation | burst disconnects | Proven |
 | P92 | Kill switch | unstoppable rogue orders | Proven |
+| P93 | Fail-operational degraded modes | function death with component death | Proven |
+| P94 | Watchdog + heartbeat supervision | wedged-but-alive processes | Proven |
+| P95 | 2oo3 voting | undetectable single-channel lies | Proven |
+| P96 | Verify-every-layer | stage-boundary shape drift | Proven |
+| P97 | Auto-blessing golden masters | golden-suite rot | Proven |
+| P98 | Dress-rehearsal release gate | first-real-sequence-in-prod | Proven |
+| P99 | Structural coverage gates (MC/DC) | untested decision combinations | Proven |
+| P100 | Margin budgets | resources at 100% with no reserve | Proven |
+| P101 | Scheduled chaos experiments | untested production failure paths | Proven |
+| P102 | Ontology + lineage | table soup, impact archaeology | Proven |
 
 ## 3. Catalog; Frontier (X1–X7)
 

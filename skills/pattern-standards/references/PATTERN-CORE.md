@@ -1,6 +1,6 @@
 # PATTERN-CORE; the WyattAu design-pattern canon
 
-Status: CURRENT, 2026-11. 149 patterns in three series, 8 named
+Status: CURRENT, 2026-11. 159 patterns in three series, 8 named
 refusals, a 25-pattern baseline tier. Projection source for the
 `wyattau-patterns` skill; consumable directly with `references/`.
 
@@ -31,23 +31,27 @@ closures, Strategy is a function parameter, Decorator is composition,
 and most "anti-OOP" codebases contain isomorphic versions. This canon
 does not relabel them. It catalogs constructs that change the
 computational model, the time model, or the mathematical invariants.
+Production prior art for the doctrine exists at API and compiler
+scale: Vulkan's explicit-over-implicit design and LLVM's
+verify-every-layer discipline are this thesis enforced by platform.
 
 ## 2. Series and reading order
 
 | Series | Range | File(s) | Stance |
 |---|---|---|---|
 | Foundations (T) | T1–T50 | `references/foundations-*.md` | Proven structural primitives; adopt by default where the domain applies |
-| Field constructs (P) | P1–P92 | `references/field-*.md` | Problem-driven; adopt when the named failure mode exists |
+| Field constructs (P) | P1–P102 | `references/field-*.md` | Problem-driven; adopt when the named failure mode exists |
 | Frontier (X) | X1–X7 | `references/frontier.md` | Research-grade; pilot with ADR only |
 | Catalog | all | `references/catalog.md` | The full ID enumeration with maturity stamps (mirrors reference headings) |
 
 Field-series domains: `field-fullstack.md` (P1–P10), `field-numerical.md`
 (P11–P20), `field-concurrency.md` (P21–P30), `field-agentic.md`
 (P31–P40), `field-security.md` (P41–P50), `field-operations.md`
-(P51–P54, P62–P63), `field-data-evolution.md` (P55–P61),
+(P51–P54, P62–P63, P101), `field-data-evolution.md` (P55–P61, P102),
 `field-testing.md` (P64–P69), `field-api.md` (P70–P74),
-`field-deployment.md` (P75–P79), `field-compliance.md` (P80–P86),
-`field-execution.md` (P87–P92). Foundations
+`field-deployment.md` (P75–P79, P98), `field-compliance.md` (P80–P86),
+`field-execution.md` (P87–P92), `field-safety.md` (P93–P95, P100),
+`field-verification.md` (P96–P97, P99). Foundations
 domains: types/algebra (T1–T10), execution/reactive (T11–T20),
 state/time (T21–T30), distributed (T31–T42), interfaces/security/AI
 (T43–T50). Pattern selection per task type is a graph traversal, not a
@@ -151,6 +155,8 @@ obey its REFUSE edges. Full algorithm and edges:
 | N25 | PII store / processing | P4, P43 |
 | N26 | Trading execution | P17, P20, P92 |
 | N27 | Secrets & identity | P84, P85 |
+| N28 | Degraded-mode / fail-operational design | P93 |
+| N29 | Release rehearsal | P98 |
 
 Two nodes apply to one task: union the MANDATORY sets and answer both
 ASK chains. Unknown ASK predicate: ask the user; never guess.

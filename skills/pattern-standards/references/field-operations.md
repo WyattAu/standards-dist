@@ -39,3 +39,9 @@ them, not the pattern being wrong.
 **Mechanism.** Propagate W3C `traceparent`/`tracestate` on every hop (HTTP, queue messages, spawned tasks); inject the context into wide events (P42) and into spawned work; sample at the edge once, propagate the decision everywhere.
 **Analysis.** Proven (W3C Trace Context; OpenTelemetry default). Baseline via N11 telemetry setup. Refuse nowhere in service estates; single-process scripts skip it.
 **Links.** P42 (context lands in the wide event), P30 (recorder tags the scope), T38 (causal tokens are the data-plane analog).
+
+### P101 · Scheduled chaos experiments
+**Failure.** Fault tolerance proven in CI is untested in production topology; the first real failure runs failure paths that have never executed with real traffic, real timeout values, and real dependency graphs.
+**Mechanism.** Schedule experiments in production with a written hypothesis ("losing the cache for ten minutes keeps p99 under budget"), minimal blast radius (one instance, one tenant cohort), an abort condition wired to P45 signals, and a required post-experiment write-up; every finding converts into a new CI fault case (P29) so the same failure cannot surprise twice.
+**Analysis.** Proven (Netflix ChAP and the Simian Army lineage; the Principles of Chaos). Refuse chaos without hypothesis, abort condition, or blast-radius cap; that is an outage with a calendar invite.
+**Links.** P29 (CI fault injection is the rehearsal; production is the exam), P45 (abort signals), P51, P52, P53 (the mechanisms under test), P83 (experiment events are audited).

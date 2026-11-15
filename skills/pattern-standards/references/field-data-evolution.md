@@ -45,3 +45,9 @@ expensive.
 **Mechanism.** Pre-aggregate into fixed time buckets (1m/1h/1d) with idempotent upserts; retention tiers: raw short, rollups long; every query targets the coarsest tier that answers it. Bucket writes survive replay (P56-style idempotency).
 **Analysis.** Proven (time-series DB practice; continuous aggregates). Adopt for any append-heavy event stream with aggregate consumers. Refuse for small datasets where the raw table answers everything in milliseconds.
 **Links.** T21 (raw retention policy rides the event log), P56 (backfills recompute buckets idempotently), P42 (wide events feed the buckets).
+
+### P102 · Ontology + lineage over domain data
+**Failure.** Data platforms accrete table soup: nobody can answer "which upstream datasets feed this dashboard" or "what breaks if this source changes shape"; every change begins with impact archaeology.
+**Mechanism.** A typed object model over domain entities (the ontology: entities, relations, semantics in one registered place) plus automatic lineage capture: every derived dataset records its sources and its transform; impact queries traverse lineage, and a source type change surfaces as a concrete list of affected downstream artifacts.
+**Analysis.** Proven as a productized practice (Palantir Foundry's ontology); Emerging as open tooling (OpenLineage, DataHub). Adopt when data flows exceed the team's ability to hold the DAG in their heads. Refuse for small pipelines where one screen shows everything.
+**Links.** T28 (lineage edges are content-addressed), T26 (bitemporal ontology facts), P13 (lineage queries respect as-of semantics), P48 (the same graph discipline over data imports that P48's CI gate applies to code imports).

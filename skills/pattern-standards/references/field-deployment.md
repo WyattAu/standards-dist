@@ -33,3 +33,9 @@ one event. All Proven; the failure mode they share is binary rollout
 **Mechanism.** Build once, promote by digest (T28): every environment runs the exact artifact CI verified; SBOM and provenance attestation (sigstore/cosign) attach at build; admission control rejects undigested or unattested images; rollback = redeploy the previous digest.
 **Analysis.** Proven (sigstore, supply-chain security practice; OMNI-CORE 11h/11j make it estate law). Baseline for estate deployments. Refuse nowhere; rebuilding for an environment is the anti-pattern.
 **Links.** T28 (content addressing), OMNI-CORE 11h/11j (SBOM + attestations), P76 (both colors are digests), P44 (flags live in config, not in rebuilt artifacts).
+
+### P98 · Dress-rehearsal release gate
+**Failure.** The first time a release executes its full production sequence, with real data volumes, real operation order, and real integrations, is in production; the gaps between staging and production surface as incidents.
+**Mechanism.** A release gate that runs the complete production sequence against a production-fidelity environment: same entry points, same data geometry (P50), same runbook, same timing; the rehearsal must pass the same health gates the release will use; a rehearsal failure is a release blocker, and the drain is rehearsed too.
+**Analysis.** Proven (the "test like you fly" doctrine; SpaceX static-fire practice; Jane Street shadow-trading strategies before capital). Refuse rehearsals on toy data and rehearsal gates looser than release gates; both are theater.
+**Links.** P77 (shadow traffic is continuous rehearsal), T36 (the simulation layer beneath it), P50 (production geometry), P62 (the drain is part of the sequence).

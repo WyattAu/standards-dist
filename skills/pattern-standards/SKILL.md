@@ -1,8 +1,8 @@
 ---
 name: wyattau-patterns
 description: |
-  Route design decisions through the WyattAu pattern canon: 149 constructs,
-  8 refusals, 25 baseline-tier defaults, and a 27-node task graph that
+  Route design decisions through the WyattAu pattern canon: 159 constructs,
+  8 refusals, 25 baseline-tier defaults, and a 29-node task graph that
   picks patterns for you. Use when choosing or reviewing architecture,
   data flow, or API design; when a failure mode names its pattern
   (N+1, race, deadlock, IDOR, penny rounding, retry storm, prompt
@@ -38,7 +38,8 @@ default-adopt where domain applies), **P** field constructs P1–P50
    client state, N15 numerical kernel, N16 distributed state, N17 repo
    skeleton, N18 load control, N19 webhook receiver, N20 backfill job,
    N21 risky release, N22 test suite, N23 API surface, N24 deploy,
-   N25 PII processing, N26 trading execution, N27 secrets/identity).
+   N25 PII processing, N26 trading execution, N27 secrets/identity,
+   N28 degraded modes, N29 release rehearsal).
 2. Open `references/decision-graph.md` at that node. Its MANDATORY set,
    ASK branches, and REFUSE edges are the design; do not weigh
    alternatives. An ASK predicate you cannot answer from the task
@@ -70,6 +71,8 @@ default-adopt where domain applies), **P** field constructs P1–P50
 | Canary, blue-green, shadow, artifact attestation | `references/field-deployment.md` | P75–P79 |
 | PII storage, consent, DSAR, audit tamper-proofing | `references/field-compliance.md` | P80–P86 |
 | Order slicing, routing, fills, TCA, kill switch | `references/field-execution.md` | P87–P92 |
+| Degraded modes, watchdogs, voting, margin budgets | `references/field-safety.md` | P93–P95, P100 |
+| Verifier discipline, golden rot, MC/DC gates | `references/field-verification.md` | P96–P99 |
 | Distributed consistency, tail latency | `references/foundations-distributed.md` | T31–T42 |
 | Event history, audit, time-travel queries | `references/foundations-state.md` | T21–T30 |
 | LLM output validation, agent writes | `references/foundations-interfaces.md` | T48–T50 |

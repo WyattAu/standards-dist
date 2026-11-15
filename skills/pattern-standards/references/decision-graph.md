@@ -54,6 +54,8 @@ a guess.
 | N25 | PII store / processing | P4, P43 | §N25 |
 | N26 | Trading execution | P17, P20, P92 | §N26 |
 | N27 | Secrets & identity | P84, P85 | §N27 |
+| N28 | Degraded-mode / fail-operational design | P93 | §N28 |
+| N29 | Release rehearsal | P98 | §N29 |
 
 ## Edges per node
 
@@ -128,7 +130,8 @@ endpoints without T33; bare HTTP calls with no breaker state.
 P42 (wide events).
 **ASK.** Poison-tenant blast radius matters? add T42 (shuffle sharding).
 Latency-critical jobs? add P30 (flight recorder). Fault paths tested?
-add P29 (Faulty<IO> in CI).
+add P29 (Faulty<IO> in CI). Wedge detection for daemons? add P94
+(progress heartbeats under a supervisor).
 **REFUSE.** One shared FIFO across tenants; detached tasks outside an
 AbortScope.
 
@@ -208,7 +211,10 @@ wall-clock ordering assumptions.
 concurrency), P48 (layering fitness gate in CI), plus PATTERN-CORE §3
 baseline tier for the applicable domains.
 **ASK.** Quant domain? add N15 mandatory set. Agents? add N05 mandatory
-set. Money? add N03 mandatory set.
+set. Money? add N03 mandatory set. Compiler or multi-stage pipeline?
+add P96 (verify-every-layer). Domain data platform? add P102
+(ontology + lineage). Capacity headroom as a requirement? add P100
+(margin budgets).
 **REFUSE.** Speculative factories (R1); interface seams added for
 mocking (R2); layers without a fitness gate.
 
@@ -254,10 +260,12 @@ safely rewrite).
 **MANDATORY.** P64 (properties over generated inputs for pure cores),
 P68 (builders, no shared mutable fixtures).
 **ASK.** Legacy or undocumented code under test? add P65 (golden
-masters as characterization). Parser or protocol edge? add P67
+masters as characterization). Golden masters already in CI? add P97
+(auto-blessing). Parser or protocol edge? add P67
 (structure-aware fuzzing) and P29 (fault shapes). Suite suspects weak?
 add P66 (mutation audit, scheduled). Suite over ~50 tests with flakes?
-add P69 (quarantine with expiry).
+add P69 (quarantine with expiry). Regulated or safety-critical target?
+add P99 (MC/DC gates).
 **REFUSE.** Mock-driven suites (R2: pure core plus integration instead);
 snapshots as the only spec for new code (they canonize current bugs);
 coverage percentages quoted as strength (P66 measures strength).
@@ -278,7 +286,8 @@ params; breaking removals without the P74 window; offset pagination
 analysis). Revert speed dominates? add P76 (blue-green; migrations must
 be expand-contract per N13). Rewrite needs real-input validation? add
 P77 (shadow traffic). User-visible feature? add P78 (progressive
-cohorts via P44 flags).
+cohorts via P44 flags). Full-sequence rehearsal before release? add
+P98 (extend to N29). Capacity margin for the new version? add P100.
 **REFUSE.** Deploying artifacts not bit-identical to CI-tested ones;
 canaries without automated analysis (a manual canary is a lottery);
 shadow traffic with ungated side effects.
@@ -301,7 +310,8 @@ order path).
 **ASK.** Parent orders large relative to venue liquidity? add P87
 (slicing). Multi-venue? add P88 (routing by effective cost). Broker on
 the other side? add P89 (fill reconciliation) and P90 (slippage
-benchmarks). Venue data feeds? add P91 (budget adaptation).
+benchmarks). Venue data feeds? add P91 (budget adaptation). Feed
+handler wedge protection? add P94 (watchdog + heartbeat).
 **REFUSE.** Order paths without a halt check (N26 does not exist
 without P92); single-clip parent orders on thin venues; positions
 adjusted from unreconciled fills.
@@ -316,6 +326,27 @@ add P83 for the access records.
 **REFUSE.** Shared static secrets in environment variables (R4
 adjacent: ambient authority); credentials without a rotation path;
 admin access without expiry or audit.
+
+### N29 · Release rehearsal
+**MANDATORY.** P98 (rehearse the complete production sequence against
+production fidelity, same gates as release).
+**ASK.** Continuous rehearsal on real traffic? add P77 (shadow
+traffic). Replay of historical sequences? add P20 + T36 (the envelope
+plus deterministic replay). Production fault drill during rehearsal?
+add P101. Degraded-tier rehearsal? add P93 (the degraded path is part
+of the sequence).
+**REFUSE.** Rehearsal on toy or sanitized data (P50's failure mode);
+rehearsal gates looser than release gates; happy-path-only rehearsals.
+
+### N28 · Degraded-mode / fail-operational design
+**MANDATORY.** P93 (tiers defined, auto-entered, auto-exited).
+**ASK.** Hung-component detection? add P94 (progress heartbeats).
+Sensor or input redundancy? add P95 (2oo3 voting). Capacity headroom
+accounting? add P100 (margin budgets). Production validation of the
+degradation paths? add P101 (chaos drills).
+**REFUSE.** Degradation tiers without tested exit criteria; shed lists
+that grow unbounded; fail-safe designs for functions that must keep
+serving.
 
 ## Worked chains
 
@@ -361,7 +392,9 @@ graph TD
   CLS --> N25[N25 PII processing]
   CLS --> N26[N26 trading execution]
   CLS --> N27[N27 secrets/identity]
-  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 & N22 & N23 & N24 & N25 & N26 & N27 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
+  CLS --> N28[N28 degraded modes]
+  CLS --> N29[N29 release rehearsal]
+  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 & N22 & N23 & N24 & N25 & N26 & N27 & N28 & N29 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
 ```
 
 ## Maintenance rules
