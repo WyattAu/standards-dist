@@ -1,8 +1,8 @@
 ---
 name: wyattau-patterns
 description: |
-  Route design decisions through the WyattAu pattern canon: 159 constructs,
-  8 refusals, 25 baseline-tier defaults, and a 29-node task graph that
+  Route design decisions through the WyattAu pattern canon: 176 constructs,
+  12 refusals, 25 baseline-tier defaults, and a 31-node task graph that
   picks patterns for you. Use when choosing or reviewing architecture,
   data flow, or API design; when a failure mode names its pattern
   (N+1, race, deadlock, IDOR, penny rounding, retry storm, prompt
@@ -39,7 +39,8 @@ default-adopt where domain applies), **P** field constructs P1–P50
    skeleton, N18 load control, N19 webhook receiver, N20 backfill job,
    N21 risky release, N22 test suite, N23 API surface, N24 deploy,
    N25 PII processing, N26 trading execution, N27 secrets/identity,
-   N28 degraded modes, N29 release rehearsal).
+   N28 degraded modes, N29 release rehearsal, N30 time budgets,
+   N31 dataset publishing).
 2. Open `references/decision-graph.md` at that node. Its MANDATORY set,
    ASK branches, and REFUSE edges are the design; do not weigh
    alternatives. An ASK predicate you cannot answer from the task
@@ -64,14 +65,20 @@ default-adopt where domain applies), **P** field constructs P1–P50
 | Poisoned queue, forged webhooks, dropped deploys | `references/field-operations.md` | P53, P54, P62 |
 | Traces that will not correlate | `references/field-operations.md` | P63 |
 | Lost updates between concurrent writers | `references/field-data-evolution.md` | P55 |
+| Upstream tables lie to dashboards | `references/field-data-evolution.md` | P110 |
 | Backfills, ID strategy, scan-heavy dashboards | `references/field-data-evolution.md` | P56, P60, P61 |
 | Provider broke consumers; legacy rewrite | `references/field-data-evolution.md` | P57–P59 |
-| Designing the test suite for a module | `references/field-testing.md` | P64–P69 |
+| Designing the test suite for a module | `references/field-testing.md` | P64–P69, P109 |
 | Public API shape, errors, list params, deprecation | `references/field-api.md` | P70–P74 |
-| Canary, blue-green, shadow, artifact attestation | `references/field-deployment.md` | P75–P79 |
+| Canary, blue-green, shadow, artifact attestation | `references/field-deployment.md` | P75–P79, P98 |
 | PII storage, consent, DSAR, audit tamper-proofing | `references/field-compliance.md` | P80–P86 |
 | Order slicing, routing, fills, TCA, kill switch | `references/field-execution.md` | P87–P92 |
-| Degraded modes, watchdogs, voting, margin budgets | `references/field-safety.md` | P93–P95, P100 |
+| Calls hang, DNS lies, crons double-run | `references/field-networking.md` | P103–P105 |
+| DB sessions, double-apply, replica lag | `references/field-data-layer.md` | P106–P108 |
+| Skew, model archaeology, lying experiments | `references/field-ml.md` | P111–P113 |
+| Degraded modes, watchdogs, voting, margin budgets, cost budgets | `references/field-safety.md` | P93–P95, P100, P119 |
+| Restores never tested, metrics exploding | `references/field-operations.md` | P117, P118 |
+| Tokens accepted on faith, uploads trusted | `references/field-security.md` | P114–P116 |
 | Verifier discipline, golden rot, MC/DC gates | `references/field-verification.md` | P96–P99 |
 | Distributed consistency, tail latency | `references/foundations-distributed.md` | T31–T42 |
 | Event history, audit, time-travel queries | `references/foundations-state.md` | T21–T30 |
@@ -99,6 +106,12 @@ needs an ADR stating why the failure mode cannot occur (PATTERN-CORE
 6. No pattern adoption without a named failure mode.
 7. No scattered decision thresholds — one collapse boundary (X1).
 8. No criticality vocabularies where everything is P0.
+9. No org-process patterns (postmortems, design-doc review, on-call);
+   process canon territory.
+10. No framework-specific idioms; framework canons own them.
+11. No hardware co-design until bare-metal latency paths exist here.
+12. No mid-experiment metric peeking without a pre-registered
+    sequential design (P113 supplies the mechanics).
 
 ## Adoption rules
 

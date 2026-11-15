@@ -45,3 +45,15 @@ them, not the pattern being wrong.
 **Mechanism.** Schedule experiments in production with a written hypothesis ("losing the cache for ten minutes keeps p99 under budget"), minimal blast radius (one instance, one tenant cohort), an abort condition wired to P45 signals, and a required post-experiment write-up; every finding converts into a new CI fault case (P29) so the same failure cannot surprise twice.
 **Analysis.** Proven (Netflix ChAP and the Simian Army lineage; the Principles of Chaos). Refuse chaos without hypothesis, abort condition, or blast-radius cap; that is an outage with a calendar invite.
 **Links.** P29 (CI fault injection is the rehearsal; production is the exam), P45 (abort signals), P51, P52, P53 (the mechanisms under test), P83 (experiment events are audited).
+
+### P117 · Restore drills
+**Failure.** Backups exist; restores do not: the first real restore discovers expired credentials, a 12-hour RTO that was promised as 1 hour, and schema drift between the backup and the code that must read it.
+**Mechanism.** Schedule restore drills into an isolated sandbox on a fixed cadence: restore, verify data fidelity (counts, checksums, P19-style digests), boot the application against the restored copy, and measure RTO/RPO against stated targets; a failed drill is a page-class incident (P45), not a ticket. The drill copy obeys production data rules (P43 keys included).
+**Analysis.** Proven (SRE doctrine: untested backups are hopes). Refuse drills without fidelity checks; an empty restore that "succeeds" proves nothing.
+**Links.** P101 (the same hypothesis/abort/write-up shape), P19 (fidelity digests), P43 (keys must restore too), P45 (failed drills page), N13 (rollback rehearsals share the sandbox).
+
+### P118 · Metric cardinality budgeting
+**Failure.** One unbounded label (user_id, request_id, path-with-IDs) turns a metric into millions of series; the TSDB's memory and the invoice explode together, and every dashboard slows down with them.
+**Mechanism.** Every metric declares a cardinality budget (dimensions and per-dimension value caps); registration rejects unbounded labels; overflow paths aggregate into a bounded `other` bucket with a counter tracking how often overflow fired; budget usage is reviewed like a P100 margin account.
+**Analysis.** Proven (Prometheus community doctrine; every TSDB vendor's guidance). Refuse nowhere for metrics pipelines; cardinality debt cannot be paid down after the fact, only restarted.
+**Links.** P100 (the same budget discipline), P42 (wide events carry the high-cardinality detail that metrics cannot), P45 (alerts consume only the bounded series).

@@ -51,3 +51,9 @@ expensive.
 **Mechanism.** A typed object model over domain entities (the ontology: entities, relations, semantics in one registered place) plus automatic lineage capture: every derived dataset records its sources and its transform; impact queries traverse lineage, and a source type change surfaces as a concrete list of affected downstream artifacts.
 **Analysis.** Proven as a productized practice (Palantir Foundry's ontology); Emerging as open tooling (OpenLineage, DataHub). Adopt when data flows exceed the team's ability to hold the DAG in their heads. Refuse for small pipelines where one screen shows everything.
 **Links.** T28 (lineage edges are content-addressed), T26 (bitemporal ontology facts), P13 (lineage queries respect as-of semantics), P48 (the same graph discipline over data imports that P48's CI gate applies to code imports).
+
+### P110 · Data contracts + expectation tests
+**Failure.** Upstream tables silently stop updating, ship nulls, or drift their enums; dashboards lie for a week until somebody notices downstream.
+**Mechanism.** Each published dataset declares a contract: schema (types + nullability), freshness SLO, volume bounds, and semantic expectations (row-level checks); the producer's publish gate runs the expectation suite; violations block publication or quarantine with alerts (P18-shaped); consumers codegen against the contract (T6 shape).
+**Analysis.** Proven direction (dbt tests, Great Expectations, the data-contracts movement; productized practice). Refuse contracts on exploratory notebooks; contracts govern published artifacts only.
+**Links.** T32 (publish through the outbox discipline), P57 (the API-surface twin), P18 (distribution drift canaries), P71 (the registry governs shape evolution; contracts govern content quality), N31 (the graph node this feeds).

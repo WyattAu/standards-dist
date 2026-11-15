@@ -41,3 +41,9 @@ quarantine for flakes (P69). Mock-heavy suites are refused (R2).
 **Mechanism.** Flakes auto-quarantine with an expiry date (a P44 discipline for tests: quarantined means scheduled for fixing, not forgotten); root-cause via deterministic replay (seeded scheduler, T36) and commit bisection; quarantine depth is a tracked metric with a burn-down gate.
 **Analysis.** Emerging-to-proven (Google-scale flaky tooling; the expiry discipline is the transferable part). Refuse nowhere for CI suites over ~50 tests; below that, fix flakes immediately.
 **Links.** T36 (determinism is the cure), P44 (expiry enforcement mechanics), P30 (flight recorders capture the flaky window).
+
+### P109 · Query-count assertions
+**Failure.** An ORM change turns one list view into 200 queries; tests stay green because they never counted; production database load triples and the trail leads back to a "harmless refactor".
+**Mechanism.** The test harness instruments the database driver and asserts an upper bound on query count per action (optionally total time); exceeding the bound fails with the query log attached. Bounds are budgets in the P100 shape: raising one is a deliberate, reviewed act.
+**Analysis.** Proven (standard practice in ORM test harnesses across the Rails/Django/Go ecosystems). Refuse exact-count assertions that shatter on harmless refactors; upper bounds only.
+**Links.** N01 (the failure mode this closes), P66 (mutation measures assertion strength; this measures query behavior), P73 (the list contract keeps queries bounded by design), P106 (the session guards that survive the queries that do run).

@@ -28,3 +28,9 @@ single undetected failure, or a resource consumed to exactly 100%.
 **Mechanism.** Every bounded resource carries a margin account: a stated total with units (PRESENT PR-5), a reservation ledger where each feature or tenant registers its claim, and a burn-down review on every addition. Margin below the reserve floor blocks new claims; a budget that cannot say no is decoration.
 **Analysis.** Proven (NASA and defense margin management; capacity-planning doctrine). Refuse advisory-only ledgers; unenforced margins are vibes with units.
 **Links.** X4 (resource envelopes are the compile-time cousin), P17 (margin expressed as tokens), P22 (fair shares are claims on the account), P27 (emergencies draw down the reserve deliberately).
+
+### P119 · Cost budgets
+**Failure.** Cloud cost is discovered at month-end; one forgotten experiment or one noisy query doubles the bill; unit economics (cost per tenant, per request) are folklore.
+**Mechanism.** Every deployable and every scheduled job carries cost tags (tenant, team, feature) and a margin account in the P100 shape: stated total, reservation ledger, block-on-exhaustion; queries declare a maximum cost at parse time and expensive scans are rejected before execution; unit-cost series (per request, per tenant) are first-class rollups (P61).
+**Analysis.** Proven direction (FinOps doctrine; BigQuery/Redshift cost controls; tagging-policy enforcement). Adopt progressively: tags first (mechanical), then caps (policy), then unit economics (analysis). Refuse nowhere multi-tenant; single-tenant estates still gain unit cost per feature.
+**Links.** P100 (the margin account specialized to dollars), P61 (unit-cost rollups), P27 (cost is a shedding dimension), P22 (per-tenant fairness has a dollar axis), P110 (data contracts carry cost expectations).

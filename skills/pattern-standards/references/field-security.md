@@ -62,3 +62,21 @@ vigilance always eventually fails.
 **Mechanism.** One content-addressed dev/CI envelope: pinned system libraries, compilers, and anonymized production-distribution synthetic DB snapshots; local runs match production geometry.
 **Analysis.** Proven direction (the estate's Nix shells are half of this; the synthetic-data half is emerging). Adopt incrementally: pin libraries first (done via Nix), then distributions for the DBs where plans go wrong (Postgres statistics). Refuse where data distribution is not load-bearing.
 **Links.** Nix devShell invariant (OMNI-CORE 11b); P18 (synthetic data must pass the same drift canaries); T36 (the simulation layer above the data layer).
+
+### P114 · JWT validation discipline
+**Failure.** Tokens are accepted on faith: the `alg` header is honored (alg-none and RS/HS confusion attacks), `kid` is trusted blindly, expiry is checked without skew bounds, audience is never verified; one accepted forged token is game over.
+**Mechanism.** Pin the expected algorithm server-side and reject mismatches before any crypto runs; resolve keys only from a trusted, versioned key source (never fetch by raw kid from an attacker-influenced path); verify issuer, audience, and expiry with a bounded skew window; fail closed and log the specific rejection reason as a wide event (P42).
+**Analysis.** Proven (OWASP JWT cheat sheet; every major auth vendor's guidance; the alg-confusion class is still found in the wild). Refuse hand-rolled token parsing anywhere; use a vetted library with algorithm pinning.
+**Links.** T8 (authority lives in capabilities, not in bearer tokens alone), P84 (workload identity replaces long-lived tokens internally), P63 (token correlation), P72 (typed rejections).
+
+### P115 · Cryptographic agility
+**Failure.** Algorithms are hard-coded; when one is broken or superseded (the live case: the NIST post-quantum standards and their migration windows), every ciphertext and signature in history must migrate in a panicked big-bang.
+**Mechanism.** Every key and ciphertext carries a versioned algorithm tag; new writes use the current algorithm, reads accept all known versions; migration runs as an expand-contract window (P74/P75 shape): write-new, read-both, retire-old; an algorithm inventory report is an audit artifact (P83).
+**Analysis.** Proven (KMS and JWT `kid` practice; NIST post-quantum migration guidance makes the discipline current). Refuse unversioned encrypted blobs; they are unmigratable by construction.
+**Links.** P43 (versioned per-entity DEKs are the special case), P85 (rotation is the small sibling), P74 (the same expand-contract window over algorithms).
+
+### P116 · Upload hardening
+**Failure.** Ingestion trusts client-supplied names and declarations: the extension lies (the content is a webshell), the archive decompresses 10,000-fold (bomb), paths escape the destination (`../` zip-slip), and metadata leaks location data.
+**Mechanism.** Validate by sniffed content (magic bytes), never by client claim; enforce size caps before and after decompression with an expansion-ratio limit; extract archives through sanitized paths into a jailed root; strip or whitelist metadata; scan inside the P46 sandbox before the file is served; every rejection is a typed problem (P72).
+**Analysis.** Proven (the OWASP upload cheat sheet, distilled). Refuse nowhere files cross a trust boundary; the checks are cheap and the incidents are expensive.
+**Links.** P46 (the parser sandbox), P54 (the same untrusted-input stance), P72 (typed rejections), T1 (the sniffed type is the parsed truth).

@@ -56,6 +56,8 @@ a guess.
 | N27 | Secrets & identity | P84, P85 | §N27 |
 | N28 | Degraded-mode / fail-operational design | P93 | §N28 |
 | N29 | Release rehearsal | P98 | §N29 |
+| N30 | Outbound calls & time budgets | P103 | §N30 |
+| N31 | Dataset publishing | P110 | §N31 |
 
 ## Edges per node
 
@@ -63,6 +65,7 @@ a guess.
 **MANDATORY.** P7 (keyset snapshot cursors).
 **ASK.** Multi-tenant data? add P41. Client infinite scroll or autosave
 nearby? add P5 (epoch tags). Deeply nested UI data needs? add P3.
+Read-after-write consistency required? add P108 (sticky position tokens).
 **REFUSE.** Offset pagination: replace with P7 (R5); no exception for
 "small tables", the cursor costs one row.
 
@@ -73,6 +76,7 @@ event per request), P47 (config epoch pinned at ingress).
 and P43 (shredding if stored append-only). Downstream retry-exposed
 calls? add P24 on the client side. Events emitted? add T32 (outbox).
 Concurrent writers on the same entity? add P55 (optimistic concurrency).
+Long-running transactions or bulk statements? add P106 (session hygiene).
 **REFUSE.** Fire-and-forget writes that skip the outbox: route through
 N04's T32 or do not emit.
 
@@ -117,11 +121,13 @@ authoritative writes.
 ### N07 · Outbound HTTP client
 **MANDATORY.** P24 (success-refilled retry budget), T33 downstream
 (idempotency on every retried endpoint), P51 (circuit breaker per
-dependency).
+dependency), P103 (deadline stamped and propagated on every call).
 **ASK.** Tail-latency-sensitive reads? add T39 (hedged requests).
 Business tiers exist? add P27 (criticality propagation). Parses
 third-party content? add P46 (capability manifest around the parser).
 Multiple dependencies sharing one pool? add P52 (bulkhead partition).
+Resolver failures hurt? add P104 (DNS discipline). Consumes tokens?
+add P114 (JWT validation discipline).
 **REFUSE.** Unbounded exponential backoff; retries on non-idempotent
 endpoints without T33; bare HTTP calls with no breaker state.
 
@@ -131,7 +137,8 @@ P42 (wide events).
 **ASK.** Poison-tenant blast radius matters? add T42 (shuffle sharding).
 Latency-critical jobs? add P30 (flight recorder). Fault paths tested?
 add P29 (Faulty<IO> in CI). Wedge detection for daemons? add P94
-(progress heartbeats under a supervisor).
+(progress heartbeats under a supervisor). Scheduled jobs in the
+pool? add P105 (overlap guards).
 **REFUSE.** One shared FIFO across tenants; detached tasks outside an
 AbortScope.
 
@@ -265,7 +272,8 @@ masters as characterization). Golden masters already in CI? add P97
 (structure-aware fuzzing) and P29 (fault shapes). Suite suspects weak?
 add P66 (mutation audit, scheduled). Suite over ~50 tests with flakes?
 add P69 (quarantine with expiry). Regulated or safety-critical target?
-add P99 (MC/DC gates).
+add P99 (MC/DC gates). ORM list views under test? add P109 (query-count
+assertions).
 **REFUSE.** Mock-driven suites (R2: pure core plus integration instead);
 snapshots as the only spec for new code (they canonize current bugs);
 coverage percentages quoted as strength (P66 measures strength).
@@ -298,7 +306,8 @@ deletion is a key drop).
 **ASK.** Subject export requests in scope? add P81 (DSAR pipeline).
 Consent-gated purposes? add P80 (consent facts) and P82 (purpose
 tags). Audit requirements? add P83 (hash chain). Analytics feeds on
-PII-bearing tables? add P82 before the first feed ships.
+PII-bearing tables? add P82 before the first feed ships. Publishing
+derived datasets? extend to N31 (P110 leads the contract).
 **REFUSE.** PII without a purpose tag reaching analytics or training;
 manual queries as the DSAR answer; plaintext PII in append-only
 stores without a DEK.
@@ -348,6 +357,30 @@ degradation paths? add P101 (chaos drills).
 that grow unbounded; fail-safe designs for functions that must keep
 serving.
 
+### N30 · Outbound calls & time budgets
+**MANDATORY.** P103 (deadline stamped at entry, propagated on every
+hop, checked before expensive work).
+**ASK.** Resolver resilience? add P104 (stale-while-error fallbacks,
+bounded TTLs). Token-consuming client? add P114 (JWT validation
+discipline). Scheduled or cron-shaped work? add P105 (overlap guards).
+Database sessions in the path? add P106 (session hygiene guards).
+**REFUSE.** Outbound calls without explicit timeouts; retrying past
+the caller's deadline; fire-and-forget work that inherits a dead
+caller's budget instead of issuing its own.
+
+### N31 · Dataset publishing
+**MANDATORY.** P110 (schema, freshness, volume, and semantic
+expectations enforced at the publish gate).
+**ASK.** Publishing from streams or outboxes? add T32 (the publish
+discipline). Scheduled compute behind the dataset? add P105 (overlap
+guards) and P56 (checkpointed rebuilds). Feeding models? add P111
+(skew guards at the consumer). PII-bearing datasets? add P4, P43, and
+the N25 obligations. Cost-heavy queries? add P119 (cost budgets at
+parse time).
+**REFUSE.** Publishing without expectation tests; silent schema drift
+past the gate; freshness SLOs nobody measures; exploratory notebooks
+shipped as contracts.
+
 ## Worked chains
 
 Common task shapes pre-resolved through the union rule; use them as
@@ -394,7 +427,9 @@ graph TD
   CLS --> N27[N27 secrets/identity]
   CLS --> N28[N28 degraded modes]
   CLS --> N29[N29 release rehearsal]
-  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 & N22 & N23 & N24 & N25 & N26 & N27 & N28 & N29 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
+  CLS --> N30[N30 time budgets]
+  CLS --> N31[N31 dataset publishing]
+  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 & N22 & N23 & N24 & N25 & N26 & N27 & N28 & N29 & N30 & N31 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
 ```
 
 ## Maintenance rules

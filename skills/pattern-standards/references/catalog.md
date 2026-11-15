@@ -166,6 +166,23 @@ file is the lookup table. Updated together with the reference files
 | P100 | Margin budgets | resources at 100% with no reserve | Proven |
 | P101 | Scheduled chaos experiments | untested production failure paths | Proven |
 | P102 | Ontology + lineage | table soup, impact archaeology | Proven |
+| P103 | Deadline propagation | composed timeout walls | Proven |
+| P104 | DNS discipline | resolver blip outages | Proven |
+| P105 | Overlap-guard scheduled jobs | double-run or never-run crons | Proven |
+| P106 | Database session hygiene | idle-in-transaction death | Proven |
+| P107 | Consumer inbox | double-applied deliveries | Proven |
+| P108 | Sticky read-after-write | vanishing writes on replicas | Proven |
+| P109 | Query-count assertions | silent N+1 shipping | Proven |
+| P110 | Data contracts + expectations | lying dashboards | Proven |
+| P111 | Train/serve skew guards | silent model decay | Proven |
+| P112 | Model registry + promotion | archaeology-model deploys | Proven |
+| P113 | Experiment bucketing + SRM | noise dressed as signal | Proven |
+| P114 | JWT validation discipline | alg-confusion game over | Proven |
+| P115 | Cryptographic agility | panicked big-bang migration | Proven |
+| P116 | Upload hardening | webshell via import folder | Proven |
+| P117 | Restore drills | untested backup hopes | Proven |
+| P118 | Metric cardinality budgeting | TSDB memory explosion | Proven |
+| P119 | Cost budgets | month-end bill discovery | Proven |
 
 ## 3. Catalog; Frontier (X1–X7)
 

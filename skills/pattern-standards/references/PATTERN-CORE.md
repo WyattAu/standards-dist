@@ -1,6 +1,6 @@
 # PATTERN-CORE; the WyattAu design-pattern canon
 
-Status: CURRENT, 2026-11. 159 patterns in three series, 8 named
+Status: CURRENT, 2026-11. 176 patterns in three series, 12 named
 refusals, a 25-pattern baseline tier. Projection source for the
 `wyattau-patterns` skill; consumable directly with `references/`.
 
@@ -40,18 +40,19 @@ verify-every-layer discipline are this thesis enforced by platform.
 | Series | Range | File(s) | Stance |
 |---|---|---|---|
 | Foundations (T) | T1–T50 | `references/foundations-*.md` | Proven structural primitives; adopt by default where the domain applies |
-| Field constructs (P) | P1–P102 | `references/field-*.md` | Problem-driven; adopt when the named failure mode exists |
+| Field constructs (P) | P1–P119 | `references/field-*.md` | Problem-driven; adopt when the named failure mode exists |
 | Frontier (X) | X1–X7 | `references/frontier.md` | Research-grade; pilot with ADR only |
 | Catalog | all | `references/catalog.md` | The full ID enumeration with maturity stamps (mirrors reference headings) |
 
 Field-series domains: `field-fullstack.md` (P1–P10), `field-numerical.md`
 (P11–P20), `field-concurrency.md` (P21–P30), `field-agentic.md`
-(P31–P40), `field-security.md` (P41–P50), `field-operations.md`
-(P51–P54, P62–P63, P101), `field-data-evolution.md` (P55–P61, P102),
-`field-testing.md` (P64–P69), `field-api.md` (P70–P74),
+(P31–P40), `field-security.md` (P41–P50, P114–P116), `field-operations.md`
+(P51–P54, P62–P63, P101, P117–P118), `field-data-evolution.md` (P55–P61,
+P102, P110), `field-testing.md` (P64–P69, P109), `field-api.md` (P70–P74),
 `field-deployment.md` (P75–P79, P98), `field-compliance.md` (P80–P86),
-`field-execution.md` (P87–P92), `field-safety.md` (P93–P95, P100),
-`field-verification.md` (P96–P97, P99). Foundations
+`field-execution.md` (P87–P92), `field-safety.md` (P93–P95, P100, P119),
+`field-verification.md` (P96–P97, P99), `field-networking.md` (P103–P105),
+`field-data-layer.md` (P106–P108), `field-ml.md` (P111–P113). Foundations
 domains: types/algebra (T1–T10), execution/reactive (T11–T20),
 state/time (T21–T30), distributed (T31–T42), interfaces/security/AI
 (T43–T50). Pattern selection per task type is a graph traversal, not a
@@ -104,6 +105,10 @@ A standard that only lists virtues is not a standard.
 | R6 | Pattern adoption without a named failure mode | Every pattern here names its trigger; no trigger, no adoption |
 | R7 | Scattered decision thresholds (`score > 0.8` in 30 services) | One collapse boundary with a stated loss matrix (X1, pilot-tier) |
 | R8 | Criticality vocabularies where everything is P0 | Three honest tiers or none (P27) |
+| R9 | Org-process patterns (postmortems, design-doc review, on-call rotations) | Process canon lives in AGENTS/SPEC discipline; this canon admits constructs only |
+| R10 | Framework-specific idioms (React hook rules, k8s operator patterns) | Framework canons own them; this canon stays framework-free |
+| R11 | Hardware co-design (FPGA tick-to-trade, kernel bypass) | Out of scope until the estate runs bare-metal latency paths |
+| R12 | Mid-experiment metric peeking without a pre-registered sequential design | P113 provides bucketing and SRM alarms; statistics needs a statistician |
 
 ## 5. Adoption procedure
 
@@ -157,6 +162,8 @@ obey its REFUSE edges. Full algorithm and edges:
 | N27 | Secrets & identity | P84, P85 |
 | N28 | Degraded-mode / fail-operational design | P93 |
 | N29 | Release rehearsal | P98 |
+| N30 | Outbound calls & time budgets | P103 |
+| N31 | Dataset publishing | P110 |
 
 Two nodes apply to one task: union the MANDATORY sets and answer both
 ASK chains. Unknown ASK predicate: ask the user; never guess.
