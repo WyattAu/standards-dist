@@ -1,6 +1,6 @@
 # PATTERN-CORE; the WyattAu design-pattern canon
 
-Status: CURRENT, 2026-11. 120 patterns in three series, 8 named
+Status: CURRENT, 2026-11. 136 patterns in three series, 8 named
 refusals, a 25-pattern baseline tier. Projection source for the
 `wyattau-patterns` skill; consumable directly with `references/`.
 
@@ -43,7 +43,9 @@ computational model, the time model, or the mathematical invariants.
 Field-series domains: `field-fullstack.md` (P1–P10), `field-numerical.md`
 (P11–P20), `field-concurrency.md` (P21–P30), `field-agentic.md`
 (P31–P40), `field-security.md` (P41–P50), `field-operations.md`
-(P51–P54, P62–P63), `field-data-evolution.md` (P55–P61). Foundations
+(P51–P54, P62–P63), `field-data-evolution.md` (P55–P61),
+`field-testing.md` (P64–P69), `field-api.md` (P70–P74),
+`field-deployment.md` (P75–P79). Foundations
 domains: types/algebra (T1–T10), execution/reactive (T11–T20),
 state/time (T21–T30), distributed (T31–T42), interfaces/security/AI
 (T43–T50). Pattern selection per task type is a graph traversal, not a
@@ -233,6 +235,22 @@ A standard that only lists virtues is not a standard.
 | P61 | Bucketed rollups + retention | raw-scan dashboards | Proven |
 | P62 | Graceful drain | dropped in-flight work | Proven |
 | P63 | Trace-context propagation | uncorrelatable traces | Proven |
+| P64 | Property-based testing | imagined-input blind spots | Proven |
+| P65 | Golden-master approval tests | undocumented legacy behavior | Proven |
+| P66 | Mutation testing | weak assertions at high coverage | Proven |
+| P67 | Structure-aware fuzzing | parser crashes on hostile input | Proven |
+| P68 | Test-data builders | fixture rot, shared mutable tests | Proven |
+| P69 | Flaky quarantine + bisection | CI signal rot | Emerging |
+| P70 | Tolerant reader | provider-adds-field breakage | Proven |
+| P71 | Schema registry + compat rules | schema evolution by hope | Proven |
+| P72 | Uniform error envelope | per-endpoint error archaeology | Proven |
+| P73 | Explicit list contract | injection-prone, unstable lists | Proven |
+| P74 | Deprecation protocol | surprise removals, eternal rot | Proven |
+| P75 | Canary + automated analysis | all-at-once bad releases | Proven |
+| P76 | Blue-green instant revert | slow rollback | Proven |
+| P77 | Shadow traffic | first-real-input rewrites | Proven |
+| P78 | Progressive exposure cohorts | flag-flip casualties | Proven |
+| P79 | Content-addressed artifacts | rebuild-and-pray deploys | Proven |
 
 ## 8. Catalog; Frontier (X1–X7)
 
@@ -276,6 +294,9 @@ obey its REFUSE edges. Full algorithm and edges:
 | N19 | Inbound webhook receiver | P54 |
 | N20 | Backfill / bulk data job | P56 |
 | N21 | Risky release / rewrite | P58 |
+| N22 | Test suite design | P64, P68 |
+| N23 | API surface design | P72 |
+| N24 | Deploy / release a service | P79 |
 
 Two nodes apply to one task: union the MANDATORY sets and answer both
 ASK chains. Unknown ASK predicate: ask the user; never guess.

@@ -48,6 +48,9 @@ a guess.
 | N19 | Inbound webhook receiver | P54 | §N19 |
 | N20 | Backfill / bulk data job | P56 | §N20 |
 | N21 | Risky release / rewrite | P58 | §N21 |
+| N22 | Test suite design | P64, P68 | §N22 |
+| N23 | API surface design | P72 | §N23 |
+| N24 | Deploy / release a service | P79 | §N24 |
 
 ## Edges per node
 
@@ -244,6 +247,39 @@ expiries so the scaffolding dies on a date.
 a strangler with no traffic seam (if you cannot intercept, you cannot
 safely rewrite).
 
+### N22 · Test suite design
+**MANDATORY.** P64 (properties over generated inputs for pure cores),
+P68 (builders, no shared mutable fixtures).
+**ASK.** Legacy or undocumented code under test? add P65 (golden
+masters as characterization). Parser or protocol edge? add P67
+(structure-aware fuzzing) and P29 (fault shapes). Suite suspects weak?
+add P66 (mutation audit, scheduled). Suite over ~50 tests with flakes?
+add P69 (quarantine with expiry).
+**REFUSE.** Mock-driven suites (R2: pure core plus integration instead);
+snapshots as the only spec for new code (they canonize current bugs);
+coverage percentages quoted as strength (P66 measures strength).
+
+### N23 · API surface design
+**MANDATORY.** P72 (uniform error envelope with a code registry).
+**ASK.** List endpoints? add P73 (allowlisted filters, stable sort,
+cursor-only). Consumers outside the deploy unit? add P70 (tolerant
+reader), P57 (contracts), P71 (schema registry). Long-lived external
+API? add P74 (deprecation protocol from announcement day).
+**REFUSE.** Per-endpoint error shapes; silent-ignore of unknown query
+params; breaking removals without the P74 window; offset pagination
+(R5 again: N01 owns it).
+
+### N24 · Deploy / release a service
+**MANDATORY.** P79 (build once, promote by digest, attested).
+**ASK.** Risky behavioral change? add P75 (canary with automated
+analysis). Revert speed dominates? add P76 (blue-green; migrations must
+be expand-contract per N13). Rewrite needs real-input validation? add
+P77 (shadow traffic). User-visible feature? add P78 (progressive
+cohorts via P44 flags).
+**REFUSE.** Deploying artifacts not bit-identical to CI-tested ones;
+canaries without automated analysis (a manual canary is a lottery);
+shadow traffic with ungated side effects.
+
 ## Worked chains
 
 Common task shapes pre-resolved through the union rule; use them as
@@ -282,7 +318,10 @@ graph TD
   CLS --> N19[N19 webhook receiver]
   CLS --> N20[N20 backfill job]
   CLS --> N21[N21 risky release]
-  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
+  CLS --> N22[N22 test suite]
+  CLS --> N23[N23 API surface]
+  CLS --> N24[N24 deploy/release]
+  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 & N22 & N23 & N24 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
 ```
 
 ## Maintenance rules

@@ -1,8 +1,8 @@
 ---
 name: wyattau-patterns
 description: |
-  Route design decisions through the WyattAu pattern canon: 120 constructs,
-  8 refusals, 25 baseline-tier defaults, and a 21-node task graph that
+  Route design decisions through the WyattAu pattern canon: 136 constructs,
+  8 refusals, 25 baseline-tier defaults, and a 24-node task graph that
   picks patterns for you. Use when choosing or reviewing architecture,
   data flow, or API design; when a failure mode names its pattern
   (N+1, race, deadlock, IDOR, penny rounding, retry storm, prompt
@@ -37,7 +37,7 @@ default-adopt where domain applies), **P** field constructs P1–P50
    N10 authz, N11 telemetry, N12 config/flags, N13 migration, N14
    client state, N15 numerical kernel, N16 distributed state, N17 repo
    skeleton, N18 load control, N19 webhook receiver, N20 backfill job,
-   N21 risky release).
+   N21 risky release, N22 test suite, N23 API surface, N24 deploy).
 2. Open `references/decision-graph.md` at that node. Its MANDATORY set,
    ASK branches, and REFUSE edges are the design; do not weigh
    alternatives. An ASK predicate you cannot answer from the task
@@ -64,6 +64,9 @@ default-adopt where domain applies), **P** field constructs P1–P50
 | Lost updates between concurrent writers | `references/field-data-evolution.md` | P55 |
 | Backfills, ID strategy, scan-heavy dashboards | `references/field-data-evolution.md` | P56, P60, P61 |
 | Provider broke consumers; legacy rewrite | `references/field-data-evolution.md` | P57–P59 |
+| Designing the test suite for a module | `references/field-testing.md` | P64–P69 |
+| Public API shape, errors, list params, deprecation | `references/field-api.md` | P70–P74 |
+| Canary, blue-green, shadow, artifact attestation | `references/field-deployment.md` | P75–P79 |
 | Distributed consistency, tail latency | `references/foundations-distributed.md` | T31–T42 |
 | Event history, audit, time-travel queries | `references/foundations-state.md` | T21–T30 |
 | LLM output validation, agent writes | `references/foundations-interfaces.md` | T48–T50 |
