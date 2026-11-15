@@ -1,4 +1,4 @@
 source: WyattAu/pattern-standards
-rev: ea7d5f5
-vendored: [references/PATTERN-CORE.md, references/decision-graph.md, references/foundations-types.md, references/foundations-execution.md, references/foundations-state.md, references/foundations-distributed.md, references/foundations-interfaces.md, references/field-fullstack.md, references/field-numerical.md, references/field-concurrency.md, references/field-agentic.md, references/field-security.md, references/field-operations.md, references/field-data-evolution.md, references/field-testing.md, references/field-api.md, references/field-deployment.md, references/field-compliance.md, references/field-execution.md, references/frontier.md]
-rebuilt: "2026-11-15T03:19:56Z by build.sh"
+rev: eee7197
+vendored: [references/PATTERN-CORE.md, references/catalog.md, references/decision-graph.md, references/foundations-types.md, references/foundations-execution.md, references/foundations-state.md, references/foundations-distributed.md, references/foundations-interfaces.md, references/field-fullstack.md, references/field-numerical.md, references/field-concurrency.md, references/field-agentic.md, references/field-security.md, references/field-operations.md, references/field-data-evolution.md, references/field-testing.md, references/field-api.md, references/field-deployment.md, references/field-compliance.md, references/field-execution.md, references/frontier.md]
+rebuilt: "2026-11-15T03:31:11Z by build.sh"

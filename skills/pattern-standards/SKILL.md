@@ -76,7 +76,7 @@ default-adopt where domain applies), **P** field constructs P1–P50
 | "Should I add a factory/interface?" | `references/PATTERN-CORE.md` §4, `references/frontier.md` | R1–R3, X7 |
 | Uncertainty, spec-as-source, choreography | `references/frontier.md` | X1–X7 |
 
-Full catalog tables with maturity stamps: PATTERN-CORE §6–§8.
+Full catalog with maturity stamps: `references/catalog.md`.
 
 ## Baseline tier (default-adopt where domain applies)
 
