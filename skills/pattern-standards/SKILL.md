@@ -16,7 +16,7 @@ license: Apache-2.0
 
 Canon: [`WyattAu/pattern-standards`](https://github.com/WyattAu/pattern-standards)
 (PATTERN-CORE.md); `references/` is a vendored projection
-(PROVENANCE.yml, SC-11). Fix the canon, rebuild the projection — never
+(PROVENANCE.yml, SC-11). Fix the canon, rebuild the projection; never
 hand-edit `references/` here.
 
 ## Doctrine
@@ -31,16 +31,16 @@ default-adopt where domain applies), **P** field constructs P1–P50
 
 ## Routing: task type first, then failure mode
 
-1. Classify the task into a decision-graph node (N01 paginated API,
-   N02 write endpoint, N03 money movement, N04 workflow, N05 agent tool
-   call, N06 cache, N07 HTTP client, N08 worker pool, N09 scheduler,
-   N10 authz, N11 telemetry, N12 config/flags, N13 migration, N14
-   client state, N15 numerical kernel, N16 distributed state, N17 repo
-   skeleton, N18 load control, N19 webhook receiver, N20 backfill job,
-   N21 risky release, N22 test suite, N23 API surface, N24 deploy,
-   N25 PII processing, N26 trading execution, N27 secrets/identity,
-   N28 degraded modes, N29 release rehearsal, N30 time budgets,
-   N31 dataset publishing).
+1. Classify the task into a decision-graph node. The 31 nodes span
+   paginated APIs, write endpoints, money movement, workflows, agent
+   tool calls, caches, HTTP clients, worker pools, schedulers, authz,
+   telemetry, config, migrations, client state, numerical kernels,
+   distributed state, repo skeletons, load control, webhook receivers,
+   backfills, risky releases, test suites, API surfaces, deploys, PII
+   processing, trading execution, secrets, degraded modes, release
+   rehearsals, time budgets, and dataset publishing. The index with
+   per-node MANDATORY sets is at the top of
+   `references/decision-graph.md`.
 2. Open `references/decision-graph.md` at that node. Its MANDATORY set,
    ASK branches, and REFUSE edges are the design; do not weigh
    alternatives. An ASK predicate you cannot answer from the task
@@ -97,21 +97,19 @@ needs an ADR stating why the failure mode cannot occur (PATTERN-CORE
 
 ## Refusals (short form; full table in PATTERN-CORE §4)
 
-1. No speculative family factories — extract mechanically when the
+1. No speculative family factories; extract mechanically when the
    second implementation exists (X7 doctrine).
-2. No mock-driven seams for testing's sake — pure core + integration/DST.
+2. No mock-driven seams for testing's sake; pure core + integration/DST.
 3. No runtime inheritance ceremony where a closure or record suffices.
-4. No mutable authority columns — derived balances (T27), capabilities (T8).
-5. No offset pagination — keyset snapshot cursors (P7).
+4. No mutable authority columns; derived balances (T27), capabilities (T8).
+5. No offset pagination; keyset snapshot cursors (P7).
 6. No pattern adoption without a named failure mode.
-7. No scattered decision thresholds — one collapse boundary (X1).
+7. No scattered decision thresholds; one collapse boundary (X1).
 8. No criticality vocabularies where everything is P0.
-9. No org-process patterns (postmortems, design-doc review, on-call);
-   process canon territory.
+9. No org-process patterns; process canon territory.
 10. No framework-specific idioms; framework canons own them.
-11. No hardware co-design until bare-metal latency paths exist here.
-12. No mid-experiment metric peeking without a pre-registered
-    sequential design (P113 supplies the mechanics).
+11. No hardware co-design (no bare-metal latency estate yet).
+12. No experiment peeking without a pre-registered design (P113).
 
 ## Adoption rules
 
@@ -123,9 +121,9 @@ needs an ADR stating why the failure mode cannot occur (PATTERN-CORE
 
 ## Anti-patterns
 
-- Hand-editing `references/` here — it is a projection; edit the canon
+- Hand-editing `references/` here; it is a projection; edit the canon
   and rerun `standards-dist/build.sh` (SC-11).
-- Citing a pattern ID that does not resolve — grep the ID in the canon
+- Citing a pattern ID that does not resolve; grep the ID in the canon
   before referencing it.
 - Reaching for X-series constructs in production paths without a
   completed pilot ADR.
