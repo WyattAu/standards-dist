@@ -1,4 +1,4 @@
-# Foundations IV — Distributed Systems & Fault Physics (T31–T42)
+# Foundations IV; Distributed Systems & Fault Physics (T31–T42)
 
 Engineering around partial failure, clock skew, and tail latency instead
 of pretending the network is a function call.
@@ -6,7 +6,7 @@ of pretending the network is a function call.
 ### T31 · Saga with semantic compensation
 **Failure.** 2PC coordinator locks span services and partitions; the whole waits on the slowest participant.
 **Mechanism.** Forward-progress state machine per step; each step declares a compensating action invoked on partial failure. Compensation is semantic (refund, release), not a DB rollback.
-**Analysis.** Proven (Garcia-Molina & Salem 1987; every travel/booking system). Cost: compensation must itself be idempotent and retryable — test it (T36). Refuse when the whole flow fits one ACID transaction.
+**Analysis.** Proven (Garcia-Molina & Salem 1987; every travel/booking system). Cost: compensation must itself be idempotent and retryable; test it (T36). Refuse when the whole flow fits one ACID transaction.
 **Links.** P36 (agent tool calls should run the same saga shape against a sandbox first); T33 (idempotency underlies every step).
 
 ### T32 · Transactional outbox + CDC
@@ -24,7 +24,7 @@ of pretending the network is a function call.
 ### T34 · Monotonic fencing tokens
 **Failure.** A GC-paused or partitioned leader wakes up and writes stale state over the new leader's writes.
 **Mechanism.** Storage grants a monotonic epoch on lock/lease grant; writes must carry the token and storage rejects writes with stale epochs.
-**Analysis.** Proven (Chubby, ZooKeeper, Kleppmann's taxonomy). Cost: storage layer must enforce the check — Postgres advisory locks + epoch columns, etcd. Refuse for single-writer systems where the failure cannot occur.
+**Analysis.** Proven (Chubby, ZooKeeper, Kleppmann's taxonomy). Cost: storage layer must enforce the check; Postgres advisory locks + epoch columns, etcd. Refuse for single-writer systems where the failure cannot occur.
 **Links.** P7 (epoch tuples inside cursors); T12 (crashed actors rejoin through fencing).
 
 ### T35 · Adaptive concurrency limits
@@ -36,7 +36,7 @@ of pretending the network is a function call.
 ### T36 · Deterministic simulation testing (DST)
 **Failure.** Race conditions and partial failure reproduce only in production; "worked in CI" means the CI never injected the fault.
 **Mechanism.** Abstract clock, PRNG, network, and disk behind one seeded scheduler; a single seed deterministically replays years of simulated faults, partitions, and reorderings (FoundationDB's simulator, Antithesis, madsim).
-**Analysis.** Proven (FoundationDB, TigerBeetle, TigerStyle). Cost: the I/O abstraction boundary — pay it once per kit. Baseline-tier for estate concurrency primitives (tier-A repos already run loom; DST extends that to protocols). Refuse for thin CRUD wrappers.
+**Analysis.** Proven (FoundationDB, TigerBeetle, TigerStyle). Cost: the I/O abstraction boundary; pay it once per kit. Baseline-tier for estate concurrency primitives (tier-A repos already run loom; DST extends that to protocols). Refuse for thin CRUD wrappers.
 **Links.** P29 (Faulty<IO> is the lightweight CI-shaped version); T10 (effects make the seams free).
 
 ### T37 · Epidemic / gossip dissemination
@@ -54,13 +54,13 @@ of pretending the network is a function call.
 ### T39 · Hedged requests
 **Failure.** p99 is owned by stragglers: one slow replica of three defines the tail.
 **Mechanism.** After the p95 delay, fire a duplicate request; first response wins, loser cancelled.
-**Analysis.** Proven (Dean & Barroso, "The Tail at Scale", 2013). Cost: duplicate load — cap hedge ratio and exclude non-idempotent or expensive-side-effect calls. Refuse for writes; T33 exists for those.
+**Analysis.** Proven (Dean & Barroso, "The Tail at Scale", 2013). Cost: duplicate load; cap hedge ratio and exclude non-idempotent or expensive-side-effect calls. Refuse for writes; T33 exists for those.
 **Links.** X6 (optimal stopping generalizes when-to-hedge into a scheduler); P27 (criticality gates who may hedge).
 
 ### T40 · Zero-copy wire framing
 **Failure.** Deserialization of hot-path messages burns CPU and allocations on field-by-field copies.
 **Mechanism.** Design the wire layout identical to in-memory alignment (Cap'n Proto, FlatBuffers, rkyv); parse becomes an O(1) bounds-checked cast.
-**Analysis.** Proven (Cap'n Proto, rkyv in latency-sensitive Rust). Cost: schema evolution discipline — field ordering is ABI. Adopt for estate internal hot paths; JSON at the edges is fine.
+**Analysis.** Proven (Cap'n Proto, rkyv in latency-sensitive Rust). Cost: schema evolution discipline; field ordering is ABI. Adopt for estate internal hot paths; JSON at the edges is fine.
 **Links.** P20 (unified replay envelopes can use this for tick transport); P25 (arenas complete the zero-alloc pipeline).
 
 ### T41 · Consistent hashing with bounded loads
@@ -72,5 +72,5 @@ of pretending the network is a function call.
 ### T42 · Shuffle sharding
 **Failure.** One poison tenant on shared nodes degrades every co-located tenant.
 **Mechanism.** Each tenant gets its own random k-of-N node subset; overlap probability between two tenants is ~1/C(N,k), so blast radius shrinks combinatorially.
-**Analysis.** Proven (AWS internal, published by AWS Builders' Library). Cost: operational complexity — per-tenant routing tables and capacity math. Adopt for noisy-tenant estate services (crawlkit tiers); refuse for uniformly benign tenants.
+**Analysis.** Proven (AWS internal, published by AWS Builders' Library). Cost: operational complexity; per-tenant routing tables and capacity math. Adopt for noisy-tenant estate services (crawlkit tiers); refuse for uniformly benign tenants.
 **Links.** P22 (DRR queues are the same fairness goal inside one node).

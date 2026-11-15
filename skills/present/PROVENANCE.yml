@@ -1,4 +1,4 @@
 source: WyattAu/standards
 rev: bfe7d01
-vendored: [references/PRESENT.md]
-rebuilt: "2026-11-15T02:37:02Z by build.sh"
+vendored: [references/PRESENT.md, scripts/voice-lint.py]
+rebuilt: "2026-11-15T02:51:18Z by build.sh"

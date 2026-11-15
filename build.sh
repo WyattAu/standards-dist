@@ -65,4 +65,9 @@ mkdir -p skills/pattern-standards/references
 cp "$PATTERN_CANON/PATTERN-CORE.md" skills/pattern-standards/references/
 cp "$PATTERN_CANON"/references/*.md skills/pattern-standards/references/
 sed -i "s/^rev: .*/rev: $PREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/pattern-standards/PROVENANCE.yml
-echo "rebuilt projections (spec=$SREV eng=$EREV standards=$STDREV patterns=$PREV)"
+VLREV=$(pin "$STANDARDS_CANON")
+cp "$STANDARDS_CANON/scripts/voice-lint.py" scripts/voice-lint.py
+mkdir -p skills/present/scripts
+cp "$STANDARDS_CANON/scripts/voice-lint.py" skills/present/scripts/voice-lint.py
+sed -i "s/^rev: .*/rev: $VLREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/present/PROVENANCE.yml
+echo "rebuilt projections (spec=$SREV eng=$EREV standards=$STDREV patterns=$PREV voice-lint=$VLREV)"

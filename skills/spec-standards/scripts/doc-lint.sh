@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Defined before first use: under `set -u` an unset expansion
+# aborts the find subshell, which silently empties the SPEC discovery
+# list and lets the oracle/REQ checks pass over zero files.
+EXTRA_FIND=""
 # doc-lint: tier-aware prose and structure gate (SPEC-CORE §9).
 # Usage: scripts/doc-lint.sh [s|k|a|d] [--req-check]
 # Runs from the repository root. Scripts are canonical; CI mirrors this

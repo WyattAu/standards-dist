@@ -1,4 +1,4 @@
-# Field III — Concurrency, Latency & Systems Reliability (P21–P30)
+# Field III; Concurrency, Latency & Systems Reliability (P21–P30)
 
 Runtime guards for the failure modes that load, time, and memory
 produce when left to developer discipline.
@@ -12,7 +12,7 @@ produce when left to developer discipline.
 ### P22 · Weighted deficit round-robin worker pools
 **Failure.** One tenant's 10,000 heavy jobs starve everyone in a shared FIFO queue.
 **Mechanism.** Per-tenant queues governed by deficit counters: strict fair-share quanta under contention, idle capacity borrowed when queues are empty.
-**Analysis.** Proven (DRR, Shreedhar–Varghese 1995, a networking-queue standard). Adopt in crawlkit/multi-tenant estate workers. Refuse for single-tenant workloads — a FIFO is fine.
+**Analysis.** Proven (DRR, Shreedhar–Varghese 1995, a networking-queue standard). Adopt in crawlkit/multi-tenant estate workers. Refuse for single-tenant workloads; a FIFO is fine.
 **Links.** T42 (the multi-node version); P27 (criticality overrides fairness for emergencies).
 
 ### P23 · Lexical `AbortScope` subscription guards
@@ -30,25 +30,25 @@ produce when left to developer discipline.
 ### P25 · Request-scoped arena allocators
 **Failure.** High-throughput APIs GC-pause or malloc-fight on millions of short-lived JSON/AST objects.
 **Mechanism.** Per-request scratch objects live in a thread-local bump buffer; response completion resets the offset in O(1). No per-object frees, no GC for request debris.
-**Analysis.** Proven (arena allocators throughout game/HPC; the `bytes`/serde ecosystem). The Rust estate mostly sidesteps GC — adopt where profiling shows allocation in hot loops (parsers, protocol edges). Refuse in GC languages without escape-hatch control.
+**Analysis.** Proven (arena allocators throughout game/HPC; the `bytes`/serde ecosystem). The Rust estate mostly sidesteps GC; adopt where profiling shows allocation in hot loops (parsers, protocol edges). Refuse in GC languages without escape-hatch control.
 **Links.** T20 (pre-allocated rings pair with arenas); T40 (zero-copy framing completes the pipeline).
 
 ### P26 · Canonical-rank lock bundles
 **Failure.** `transfer(A,B)` vs `transfer(B,A)` deadlock on dynamic multi-lock acquisition.
 **Mechanism.** Ban sequential `lock()`; all needed mutexes go through `LockBundle::acquire([m1, m2])` which sorts by canonical rank (address/ID) before atomic acquisition.
 **Analysis.** Proven (lock-ordering discipline formalized; standard in kernels). Adopt as a kit utility wherever ≥2 locks can be held. Refuse where a single lock per entity (T14 STM, T20 single-writer) removes the problem.
-**Links.** T14 (STM composes what bundles serialize); T27 (ledger accounts rank by account ID — the concrete instance).
+**Links.** T14 (STM composes what bundles serialize); T27 (ledger accounts rank by account ID; the concrete instance).
 
 ### P27 · Propagated criticality shedding
 **Failure.** Under DB load, timeouts drop the checkout request and the recommendation prefetch with equal probability.
 **Mechanism.** Business criticality tier (`P0_Checkout`..`P3_Prefetch`) attached at the edge, propagated in RPC/SQL metadata; overloaded queues and pools shed P3 first, P0 last.
-**Analysis.** Proven (workload management in enterprise DBs; adaptive-limit platforms). Adopt in estate API gateways and DB pools. Cost: honest tiering discipline — tiers decay if everything is P0 (refusal R8 caps the vocabulary at three honest tiers).
+**Analysis.** Proven (workload management in enterprise DBs; adaptive-limit platforms). Adopt in estate API gateways and DB pools. Cost: honest tiering discipline; tiers decay if everything is P0 (refusal R8 caps the vocabulary at three honest tiers).
 **Links.** T35 (the limiter that enforces); T39 (hedging gated by tier); P22 (fairness within a tier).
 
 ### P28 · Pre-warmed heap snapshot forking
 **Failure.** Serverless/heavy-config workers pay multi-second cold starts re-initializing JIT state and ML weights.
 **Mechanism.** Initialize once at build/deploy: snapshot the live heap, then spawn request sandboxes as copy-on-write forks of the snapshot in milliseconds.
-**Analysis.** Proven at hyperscale (Lambda SnapStart, Firecracker snapshots). Cost: snapshot freshness vs config drift — pin the snapshot epoch (P47). Adopt only where cold-start cost is measured and real; refuse for always-warm services.
+**Analysis.** Proven at hyperscale (Lambda SnapStart, Firecracker snapshots). Cost: snapshot freshness vs config drift; pin the snapshot epoch (P47). Adopt only where cold-start cost is measured and real; refuse for always-warm services.
 **Links.** P47 (config epochs); P30 (record which snapshot served).
 
 ### P29 · Deterministic fault-injecting I/O wrappers (`Faulty<IO>`)

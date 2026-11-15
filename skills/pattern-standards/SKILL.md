@@ -5,10 +5,10 @@ description: |
   8 refusals, 24 baseline-tier defaults. Use when choosing or reviewing
   architecture, data flow, or API design; when a failure mode names its
   pattern (N+1, race, deadlock, IDOR, pagination drift, penny rounding,
-  retry storm, agent doom loop, prompt injection, cache staleness,
-  double-write); or on "which pattern for X". Does not: UI/UX aesthetics
-  (estate-design), debugging method (estate-rigor-loop), SEO (estate-seo),
-  repo CI scaffolding (wyattau-engineering-standards).
+  retry storm, agent loops, prompt injection); or on "which pattern
+  for X". Does not: UI aesthetics (estate-design), debugging
+  (estate-rigor-loop), SEO (estate-seo), repo scaffolding
+  (wyattau-engineering-standards).
 allowed-tools: read, grep, bash
 license: Apache-2.0
 ---

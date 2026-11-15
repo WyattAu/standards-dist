@@ -1,4 +1,4 @@
-# Foundations V — Declarative, Security & Probabilistic Interfaces (T43–T50)
+# Foundations V; Declarative, Security & Probabilistic Interfaces (T43–T50)
 
 Inverting control across render trees, cryptographic proofs, and
 stochastic engines.
@@ -6,13 +6,13 @@ stochastic engines.
 ### T43 · Declarative tree reconciliation (UI = f(state))
 **Failure.** Manual DOM/listener synchronization spaghetti; UI and state drift by construction.
 **Mechanism.** UI as a pure function of state; a reconciler (fiber/signal-graph) computes the minimal mutation batch.
-**Analysis.** Proven (React, SolidJS — the estate frontend baseline). Refuse nowhere; remaining choices are granularity (VDOM vs. signals — T15) not paradigm.
+**Analysis.** Proven (React, SolidJS; the estate frontend baseline). Refuse nowhere; remaining choices are granularity (VDOM vs. signals; T15) not paradigm.
 **Links.** T15 (signal DAGs remove the diffing cost); P3 (query-plan hoisting feeds the render tree).
 
 ### T44 · Resumable closure serialization
 **Failure.** Client boot re-executes the entire component tree to rebuild interactivity; hydration is O(tree) CPU on every load.
 **Mechanism.** Serialize suspended execution boundaries and handler closures into the payload (Qwik's resumability); clients resume lazily in O(1) interactive units.
-**Analysis.** Proven (Qwik; partytown-adjacent). Cost: framework lock-in and closure-serialization constraints. Refuse on content sites where estate default is Astro/no-hydration — this pattern is for genuinely interactive islands.
+**Analysis.** Proven (Qwik; partytown-adjacent). Cost: framework lock-in and closure-serialization constraints. Refuse on content sites where estate default is Astro/no-hydration; this pattern is for genuinely interactive islands.
 **Links.** T43 (same render contract, different execution model); P3 reduces the data half of the same boot cost.
 
 ### T45 · HATEOAS / hypermedia state transitions
@@ -24,13 +24,13 @@ stochastic engines.
 ### T46 · Fixed-point Datalog rules over fact stores
 **Failure.** Authorization and dependency logic sprawl through imperative checks nobody can audit as a whole.
 **Mechanism.** Declare recursive relational rules evaluated to fixed point over immutable facts (Oso, Cedar's foundations, Datomic queries); the rule set is inspectable data.
-**Analysis.** Proven (Datalog since 1970s; production authorization engines now). Adopt for accessctl-style policy: roles, delegations, denial chains. Refuse for simple boolean checks — a predicate is not a rule engine.
+**Analysis.** Proven (Datalog since 1970s; production authorization engines now). Adopt for accessctl-style policy: roles, delegations, denial chains. Refuse for simple boolean checks; a predicate is not a rule engine.
 **Links.** P41 (RLS scoping is the enforcement half; Datalog is the policy brain); P48 (layering gates are the same analysis over import facts).
 
 ### T47 · Prove-then-verify (succinct zero-knowledge offload)
 **Failure.** Expensive or untrusted computation must be trusted on faith, or re-executed to check.
 **Mechanism.** Produce a succinct proof of the state transition; verifiers check in O(1)/polylog without re-execution (STARK/SNARK).
-**Analysis.** Emerging-to-proven for specific shapes (rollups, zkVMs like RISC Zero); impractical for general CRUD — proof generation cost dominates. Adopt when an external party must trust our computation without re-running it.
+**Analysis.** Emerging-to-proven for specific shapes (rollups, zkVMs like RISC Zero); impractical for general CRUD; proof generation cost dominates. Adopt when an external party must trust our computation without re-running it.
 **Links.** T28 (Merkle commitments are the data side); P34 (metamorphic gates when no hard verifier exists); T49 (the statistical sibling).
 
 ### T48 · FSM / grammar-constrained decoding

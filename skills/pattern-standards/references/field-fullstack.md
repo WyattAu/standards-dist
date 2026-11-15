@@ -1,4 +1,4 @@
-# Field I — Full-Stack, UI & Schema Evolution (P1–P10)
+# Field I; Full-Stack, UI & Schema Evolution (P1–P10)
 
 Problem-driven constructs where the trigger is a concrete failure mode.
 Adopt only when the failure mode is present (refusal R6). Cross-links
@@ -37,7 +37,7 @@ to the T-series foundations appear per pattern.
 ### P6 · Shadow-write parity gates
 **Failure.** Schema migrations and rewrites corrupt edge-case records that tests never modeled.
 **Mechanism.** Dual-write/dual-read old and new schemas under real traffic; compute row-level canonical hashes; cutover blocked until zero-diff parity holds across a full traffic cycle.
-**Analysis.** Proven at companies that migrate live ledgers (standard fintech practice). Cost: dual-write code is disposable scaffolding — delete it on cutover. Adopt for any risky rewrite of billing/accounting data in the estate.
+**Analysis.** Proven at companies that migrate live ledgers (standard fintech practice). Cost: dual-write code is disposable scaffolding; delete it on cutover. Adopt for any risky rewrite of billing/accounting data in the estate.
 **Links.** T21 (event sourcing makes this a projection rebuild instead); P19 (homomorphic checksums as the diff oracle); db-migration doctrine.
 
 ### P7 · Frozen-snapshot cursor envelopes
@@ -49,7 +49,7 @@ to the T-series foundations appear per pattern.
 ### P8 · Dual-frame temporal anchors
 **Failure.** Future recurring events stored as UTC instants break by an hour when governments change DST rules.
 **Mechanism.** Persist `(WallTime, IANA_Zone, RecurrenceRule)`; materialize concrete UTC instants lazily via current tzdata at query time. The stored fact is the civil intent, not an instant.
-**Analysis.** Proven doctrine (calendar-standard advice; iCalendar RRULE + TZID shape). Baseline-tier in cal-model for all future scheduling. Refuse for past events — record the actual instant that occurred.
+**Analysis.** Proven doctrine (calendar-standard advice; iCalendar RRULE + TZID shape). Baseline-tier in cal-model for all future scheduling. Refuse for past events; record the actual instant that occurred.
 **Links.** P13 (as-of joins decide which tzdata version answered).
 
 ### P9 · Thin-ping pull webhooks

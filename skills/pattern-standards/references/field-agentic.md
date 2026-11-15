@@ -1,4 +1,4 @@
-# Field IV — Probabilistic, AI & Agentic Engineering (P31–P40)
+# Field IV; Probabilistic, AI & Agentic Engineering (P31–P40)
 
 Constructs that make stochastic systems behave: quarantine inputs,
 bound spend, verify outputs, and keep loops out of ditches. Baseline
@@ -37,13 +37,13 @@ surface for estate agents (clawdius, bot-kit, docs pipelines).
 ### P36 · Staged copy-on-write diff envelopes
 **Failure.** Agents mutate real DBs, calendars, and payment APIs; irreversible damage waits for one bad tool call.
 **Mechanism.** Tool calls run against an ephemeral CoW sandbox first, compiling a deterministic dry-run diff (`+3 rows, -$120, 1 email`); policy or human approval commits atomically.
-**Analysis.** Proven direction (plan-then-apply agent architectures; DB branching tools). Adopt for every estate agent with write access — no exceptions for "small" writes (refusal-class: unreviewed agent writes). Cost: sandbox fidelity per system touched.
+**Analysis.** Proven direction (plan-then-apply agent architectures; DB branching tools). Adopt for every estate agent with write access; no exceptions for "small" writes (refusal-class: unreviewed agent writes). Cost: sandbox fidelity per system touched.
 **Links.** T50 (the enforcing shell); T31 (compensation for approved-but-wrong); P6 (parity checking against the sandbox).
 
 ### P37 · AST-guided minimal-edit repair parsers
 **Failure.** Full LLM retries over trivial syntax errors (unclosed brace, fence, single quote) waste seconds and tokens.
 **Mechanism.** Deterministic tree-repair parser ahead of schema validation fixes structural glitches in microseconds; generation retries only on genuine semantic violations.
-**Analysis.** Proven components (JSON repair libs, error-tolerant IDE parsers) composed into a newer pattern. Adopt before every retry loop in estate agent pipelines. Refuse nowhere — strictly cheaper than re-generation.
+**Analysis.** Proven components (JSON repair libs, error-tolerant IDE parsers) composed into a newer pattern. Adopt before every retry loop in estate agent pipelines. Refuse nowhere; strictly cheaper than re-generation.
 **Links.** T48 (grammar constraints prevent most repairs from being needed); T49 (repair is the cheap verifier-adjacent fix).
 
 ### P38 · Hybrid symbolic-vector cache partitioning
@@ -62,4 +62,4 @@ surface for estate agents (clawdius, bot-kit, docs pipelines).
 **Failure.** Recursive sub-agent spawning runs up unbounded API bills with no global visibility.
 **Mechanism.** Every call carries a cryptographically attenuated dollar/token lease; spawning a sub-agent carves a smaller sub-lease from the parent; exhaustion returns a typed `BudgetExhausted` fault cleanly at zero.
 **Analysis.** Emerging (macaroons are proven; the spend application to agents is new practice). Adopt for estate multi-agent runs. Cost: a lease-issuing coordinator; worth it before, not after, the first runaway bill.
-**Links.** T8 (OCap attenuation); P17 (risk-budget tokens — same shape over market exposure); X6 (stopping rules bound time as well as money).
+**Links.** T8 (OCap attenuation); P17 (risk-budget tokens; same shape over market exposure); X6 (stopping rules bound time as well as money).

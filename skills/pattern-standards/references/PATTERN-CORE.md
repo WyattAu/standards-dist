@@ -1,4 +1,4 @@
-# PATTERN-CORE — the WyattAu design-pattern canon
+# PATTERN-CORE; the WyattAu design-pattern canon
 
 Status: CURRENT, 2026-11. 107 patterns in three series, 8 named
 refusals, a 24-pattern baseline tier. Projection source for the future
@@ -11,7 +11,7 @@ vigilance and embeds it in a type, an algebraic operator, a compiler
 pass, or a runtime invariant. "Remember to check `tenant_id`",
 "remember to sanitize logs", "remember not to mutate `balance`" are
 not engineering controls; they are scheduled incidents. A pattern that
-requires discipline is a wish, not a construct — this canon only
+requires discipline is a wish, not a construct; this canon only
 admits constructs.
 
 Classic GoF patterns stagnated because they all presuppose the same
@@ -26,8 +26,8 @@ escape that box by breaking one of four assumptions:
 | Execution is single-node, synchronous, infallible | Distribution, failure, and replay as structure | T19, T31–T36, P20, P29 |
 | Logic is deterministic text | Probabilistic components with deterministic skins | T48–T50, P31–P40, X2, X4 |
 
-The GoF set is not wrong — Abstract Factory is a record of constructor
-closures, Strategy is a function parameter, Decorator is composition —
+The GoF set is not wrong; Abstract Factory is a record of constructor
+closures, Strategy is a function parameter, Decorator is composition,
 and most "anti-OOP" codebases contain isomorphic versions. This canon
 does not relabel them. It catalogs constructs that change the
 computational model, the time model, or the mathematical invariants.
@@ -107,7 +107,7 @@ A standard that only lists virtues is not a standard.
    judgments as of 2026-11; primary sources are cited in `references/`
    where a claim is load-bearing.
 
-## 6. Catalog — Foundations (T1–T50)
+## 6. Catalog; Foundations (T1–T50)
 
 | ID | Pattern | Eliminates | Maturity |
 |---|---|---|---|
@@ -162,7 +162,7 @@ A standard that only lists virtues is not a standard.
 | T49 | Generator + verifier loops | trusted plausible output | Proven |
 | T50 | Agentic capability sandboxes | agent write incidents | Proven |
 
-## 7. Catalog — Field constructs (P1–P50)
+## 7. Catalog; Field constructs (P1–P50)
 
 | ID | Pattern | Eliminates | Maturity |
 |---|---|---|---|
@@ -217,7 +217,7 @@ A standard that only lists virtues is not a standard.
 | P49 | Impact test fingerprinting | O(N) CI suites | Emerging |
 | P50 | Hermetic synthetic twins | mock-vs-prod skew | Emerging |
 
-## 8. Catalog — Frontier (X1–X7)
+## 8. Catalog; Frontier (X1–X7)
 
 | ID | Pattern | Eliminates | Stance |
 |---|---|---|---|
