@@ -1,390 +1,272 @@
 # Decision graph: task-type routing (deterministic pattern selection)
 
-Purpose: pattern selection is a traversal, not a judgment call. Classify
-the task into one node, collect its MANDATORY set, walk its ASK
-predicates in order, obey its REFUSE edges, emit the ID set. The agent
-never weighs alternatives; the graph decides. Deviations from a
-MANDATORY entry need an ADR (PATTERN-CORE §5); ASK branches that cannot
-be answered from the task requirements go to the user as a question, not
+Pattern selection is a traversal, not a judgment call. Classify the
+task into one node, collect its M (mandatory) set, walk its A (ask)
+predicates in order, obey its R (refuse) edges, emit the ID set. The
+agent never weighs alternatives; the graph decides. Deviations from an
+M entry need an ADR (PATTERN-CORE §5); A predicates that cannot be
+answered from the task requirements go to the user as a question, not
 a guess.
+
+Deterministic traversal is scripted: `scripts/route.py --task "<task>"`
+(or `--node N08`, or `--list`) parses this file and prints the block.
+Use the script before reading this file; it costs one call instead of
+a full read.
+
+## Format
+
+Each node block is four fixed lines under a `### NXX · Name` heading,
+parsed by `scripts/route.py`; format drift breaks the router
+(AGENTS.md rule 10):
+
+- `K:` classification keywords for `--task` matching
+- `M:` mandatory pattern IDs (baseline; omitting one needs an ADR)
+- `A:` ask predicates, `predicate -> ID[, ID]`, semicolon-separated,
+  walked top to bottom; an unknown predicate goes to the user
+- `R:` refuse edges, semicolon-separated; a matched edge redirects or
+  halts, never proceeds
 
 ## Traversal algorithm
 
-1. **Classify.** Map the task to exactly one node below. If two apply
-   (money movement inside a workflow), take both: union the MANDATORY
-   sets and answer both ASK chains; overlaps are consistent by design.
-2. **Collect.** The node's MANDATORY IDs are baseline; no discussion.
-3. **Branch.** Walk ASK predicates top to bottom. Each predicate is a
-   fact about the task; yes adds the IDs, no skips. Unknown predicate:
-   ask the user.
-4. **Refuse.** If the task matches a REFUSE edge, the redirect is not
-   optional; the refused variant does not proceed in any form.
-5. **Emit.** Output the ID set with the files to load. That set is the
-   design; free-form pattern picking beyond it requires the failure mode
-   to name a pattern outside the node (PATTERN-CORE §5 rule 1).
+1. Classify: map the task to exactly one node (route.py scores task
+   words against K lines). Two nodes apply: union the M sets and walk
+   both A chains; overlaps are consistent by design.
+2. Collect: the node's M IDs are baseline, no discussion.
+3. Branch: walk A predicates top to bottom; yes adds the IDs, no skips.
+4. Refuse: a matched R edge redirects or halts; the refused variant
+   does not proceed in any form.
+5. Emit: the ID set plus the reference files those IDs live in. That
+   set is the design; anything beyond it needs the failure mode to name
+   a pattern outside the node (PATTERN-CORE §5 rule 1).
 
 ## Node index
 
-| Node | Task | MANDATORY | Detail |
-|---|---|---|---|
-| N01 | Paginated collection API | P7 | §N01 |
-| N02 | Mutating write endpoint | T1, T33, P42, P47 | §N02 |
-| N03 | Money movement or split | T27, P11, P12 | §N03 |
-| N04 | Multi-service workflow | T31, T32, T19 | §N04 |
-| N05 | Agent tool call / LLM output | T48, T50, P33, P37 | §N05 |
-| N06 | Cache layer | P21 | §N06 |
-| N07 | Outbound HTTP client | P24, T33 | §N07 |
-| N08 | Multi-tenant worker pool | P22, P23, P42 | §N08 |
-| N09 | Scheduler / recurrence | P8 | §N09 |
-| N10 | Authz / tenant data access | T8, P41 | §N10 |
-| N11 | Telemetry setup | P42, P45 | §N11 |
-| N12 | Config / feature flags | P47, P44 | §N12 |
-| N13 | Schema migration / rewrite | P6 | §N13 |
-| N14 | Client state / optimistic UI | T43, P5 | §N14 |
-| N15 | Numerical kernel / backtest | P12, P13, P14, P15 | §N15 |
-| N16 | Replicated / distributed state | T33, T34, T38 | §N16 |
-| N17 | New repo / module skeleton | T13, T11, P48 | §N17 |
-| N18 | Rate limiting / load control | T35, P27 | §N18 |
-| N19 | Inbound webhook receiver | P54 | §N19 |
-| N20 | Backfill / bulk data job | P56 | §N20 |
-| N21 | Risky release / rewrite | P58 | §N21 |
-| N22 | Test suite design | P64, P68 | §N22 |
-| N23 | API surface design | P72 | §N23 |
-| N24 | Deploy / release a service | P79 | §N24 |
-| N25 | PII store / processing | P4, P43 | §N25 |
-| N26 | Trading execution | P17, P20, P92 | §N26 |
-| N27 | Secrets & identity | P84, P85 | §N27 |
-| N28 | Degraded-mode / fail-operational design | P93 | §N28 |
-| N29 | Release rehearsal | P98 | §N29 |
-| N30 | Outbound calls & time budgets | P103 | §N30 |
-| N31 | Dataset publishing | P110 | §N31 |
+| Node | Task |
+|---|---|
+| N01 | Paginated collection API |
+| N02 | Mutating write endpoint |
+| N03 | Money movement or split |
+| N04 | Multi-service workflow |
+| N05 | Agent tool call / LLM output |
+| N06 | Cache layer |
+| N07 | Outbound HTTP client |
+| N08 | Multi-tenant worker pool |
+| N09 | Scheduler / recurrence |
+| N10 | Authz / tenant data access |
+| N11 | Telemetry setup |
+| N12 | Config / feature flags |
+| N13 | Schema migration / rewrite |
+| N14 | Client state / optimistic UI |
+| N15 | Numerical kernel / backtest |
+| N16 | Replicated / distributed state |
+| N17 | New repo / module skeleton |
+| N18 | Rate limiting / load control |
+| N19 | Inbound webhook receiver |
+| N20 | Backfill / bulk data job |
+| N21 | Risky release / rewrite |
+| N22 | Test suite design |
+| N23 | API surface design |
+| N24 | Deploy / release a service |
+| N25 | PII store / processing |
+| N26 | Trading execution |
+| N27 | Secrets & identity |
+| N28 | Degraded-mode / fail-operational design |
+| N29 | Release rehearsal |
+| N30 | Outbound calls & time budgets |
+| N31 | Dataset publishing |
 
-## Edges per node
+## Node blocks
 
 ### N01 · Paginated collection API
-**MANDATORY.** P7 (keyset snapshot cursors).
-**ASK.** Multi-tenant data? add P41. Client infinite scroll or autosave
-nearby? add P5 (epoch tags). Deeply nested UI data needs? add P3.
-Read-after-write consistency required? add P108 (sticky position tokens).
-**REFUSE.** Offset pagination: replace with P7 (R5); no exception for
-"small tables", the cursor costs one row.
+K: list, page, pagination, cursor, infinite scroll, collection, table
+M: P7
+A: multi-tenant data -> P41; infinite scroll or autosave nearby -> P5; deeply nested UI data -> P3; read-after-write consistency -> P108
+R: offset pagination, replace with P7 (R5), no exception for small tables
 
 ### N02 · Mutating write endpoint
-**MANDATORY.** T1 (parse at boundary), T33 (idempotency key), P42 (wide
-event per request), P47 (config epoch pinned at ingress).
-**ASK.** Money fields? extend to N03. PII in payload? add P4 (redaction)
-and P43 (shredding if stored append-only). Downstream retry-exposed
-calls? add P24 on the client side. Events emitted? add T32 (outbox).
-Concurrent writers on the same entity? add P55 (optimistic concurrency).
-Long-running transactions or bulk statements? add P106 (session hygiene).
-**REFUSE.** Fire-and-forget writes that skip the outbox: route through
-N04's T32 or do not emit.
+K: write, endpoint, mutation, create, update, POST, ingest
+M: T1, T33, P42, P47
+A: money fields -> N03; PII in payload -> P4, P43; downstream retry-exposed calls -> P24; events emitted -> T32; concurrent writers -> P55; long-running transactions -> P106
+R: fire-and-forget writes that skip the outbox, route through N04's T32 or do not emit
 
 ### N03 · Money movement or split
-**MANDATORY.** T27 (double-entry immutable ledger), P11 (remainder
-partition), P12 (dimensional units), integer minor-units everywhere.
-**ASK.** Reconciled against an external ledger? add P19 (homomorphic
-checksums). Restatements possible? add T26 (bitemporal). Shared account
-across strategies? add P17 (risk tokens).
-**REFUSE.** Floating-point money (any amount, any language); mutable
-balance columns as stored truth (R4); percentage math in floats.
+K: money, payment, split, fee, billing, cents, ledger, charge, refund, invoice, price
+M: T27, P11, P12
+A: reconciled against external ledger -> P19; restatements possible -> T26; shared account across strategies -> P17
+R: floating-point money in any language; mutable balance columns as stored truth (R4); percentage math in floats
 
 ### N04 · Multi-service workflow
-**MANDATORY.** T31 (saga with semantic compensation), T32 (outbox+CDC),
-T19 (durable replayable coroutines when the flow outlives a process).
-**ASK.** Steps call third parties? add T33 per step. Initiated or
-stepped by an agent? add N05 mandatory plus P36 (CoW dry-run diff).
-Human approval gates? add P36.
-**REFUSE.** Cross-service 2PC; recovery logic hand-rolled outside T19;
-compensation actions that are not idempotent.
+K: workflow, saga, orchestration, multi-service, multi-step, compensation, choreography
+M: T31, T32, T19
+A: steps call third parties -> T33; initiated or stepped by an agent -> N05, P36; human approval gates -> P36
+R: cross-service 2PC; recovery logic hand-rolled outside T19; non-idempotent compensation actions
 
-### N05 · Agent tool call / LLM structured output
-**MANDATORY.** T48 (grammar-constrained decoding), T50 (capability
-sandbox), P33 (state-hash loop breaker), P37 (repair parser before
-retry).
-**ASK.** Reads untrusted text? add P31 (quarantine). Multi-turn? add
-P35 (prefix pinning). Multi-stage pipeline? add P39 (memoization).
-Sub-agent spawning? add P40 (spend lease). Write access? add P36
-(approved diff) and P44 (flag any new bypass paths).
-**REFUSE.** `JSON.parse` on raw model output; agent writes without an
-approval diff; retry loops without P33 (doom loops are a defect, not a
-strategy).
+### N05 · Agent tool call / LLM output
+K: agent, LLM, tool call, prompt, model output, generation, structured output
+M: T48, T50, P33, P37
+A: reads untrusted text -> P31; multi-turn -> P35; multi-stage pipeline -> P39; sub-agent spawning -> P40; write access -> P36, P44
+R: JSON.parse on raw model output; agent writes without an approval diff; retry loops without P33
 
 ### N06 · Cache layer
-**MANDATORY.** P21 (caller-declared staleness, single-flight).
-**ASK.** Market data or quotes? add P16 (decay widening). Semantic or
-vector search? add P38 (symbolic partition) and P39 (exact memo tier).
-Client-side optimistic state? route mutations through P5.
-**REFUSE.** A global TTL as the only staleness policy; caching
-authoritative writes.
+K: cache, TTL, stale, memoization, invalidate, read-through
+M: P21
+A: market data or quotes -> P16; semantic or vector search -> P38, P39; client-side optimistic state -> P5
+R: global TTL as the only staleness policy; caching authoritative writes
 
 ### N07 · Outbound HTTP client
-**MANDATORY.** P24 (success-refilled retry budget), T33 downstream
-(idempotency on every retried endpoint), P51 (circuit breaker per
-dependency), P103 (deadline stamped and propagated on every call).
-**ASK.** Tail-latency-sensitive reads? add T39 (hedged requests).
-Business tiers exist? add P27 (criticality propagation). Parses
-third-party content? add P46 (capability manifest around the parser).
-Multiple dependencies sharing one pool? add P52 (bulkhead partition).
-Resolver failures hurt? add P104 (DNS discipline). Consumes tokens?
-add P114 (JWT validation discipline).
-**REFUSE.** Unbounded exponential backoff; retries on non-idempotent
-endpoints without T33; bare HTTP calls with no breaker state.
+K: HTTP, client, outbound, fetch, third-party, API call, retry, webhook out
+M: P24, T33, P51, P103
+A: tail-latency-sensitive reads -> T39; business tiers -> P27; parses third-party content -> P46; shared pool across dependencies -> P52; resolver failures hurt -> P104; consumes tokens -> P114
+R: unbounded exponential backoff; retries on non-idempotent endpoints without T33; bare calls with no breaker state
 
 ### N08 · Multi-tenant worker pool
-**MANDATORY.** P22 (weighted DRR fairness), P23 (AbortScope teardown),
-P42 (wide events).
-**ASK.** Poison-tenant blast radius matters? add T42 (shuffle sharding).
-Latency-critical jobs? add P30 (flight recorder). Fault paths tested?
-add P29 (Faulty<IO> in CI). Wedge detection for daemons? add P94
-(progress heartbeats under a supervisor). Scheduled jobs in the
-pool? add P105 (overlap guards).
-**REFUSE.** One shared FIFO across tenants; detached tasks outside an
-AbortScope.
+K: worker, queue, pool, job, background, tenant fairness, cron in pool
+M: P22, P23, P42
+A: poison-tenant blast radius -> T42; latency-critical jobs -> P30; fault paths tested -> P29; daemon wedge detection -> P94; scheduled jobs in the pool -> P105
+R: one shared FIFO across tenants; detached tasks outside an AbortScope
 
 ### N09 · Scheduler / recurrence
-**MANDATORY.** P8 (dual-frame anchors: future events stored as civil
-time plus zone plus rule).
-**ASK.** Corrections to past facts? add T26 (bitemporal). Consumed by
-backtests? add P13 (as-of joins). DST-sensitive? P8 covers it; verify
-tzdata versioning is query-visible.
-**REFUSE.** Future recurring events stored as UTC instants.
+K: schedule, cron, recurrence, calendar, timezone, DST, appointment
+M: P8
+A: corrections to past facts -> T26; consumed by backtests -> P13; DST-sensitive -> verify tzdata versioning query-visible
+R: future recurring events stored as UTC instants
 
 ### N10 · Authz / tenant data access
-**MANDATORY.** T8 (capabilities, no ambient authority), P41 (tenant
-capability binding RLS).
-**ASK.** Role/delegation logic beyond boolean checks? add T46 (Datalog
-policy). Conserved quantities (grant balances, quotas)? add X5
-operators per ADR-0001 (pilot tier).
-**REFUSE.** Hand-written `WHERE tenant_id = ?` as the only control;
-new repositories constructed without a tenant capability.
+K: authz, permission, tenant, RLS, access control, capability, role, delegation
+M: T8, P41
+A: role or delegation logic beyond booleans -> T46; conserved quantities (grants, quotas) -> X5 per ADR-0001
+R: hand-written WHERE tenant_id as the only control; repositories constructed without a tenant capability
 
 ### N11 · Telemetry setup
-**MANDATORY.** P42 (wide events), P45 (burn-rate paging for the
-service), P63 (trace-context propagation on every hop).
-**ASK.** Latency-critical daemon? add P30 (ring-buffer recorder). PII
-can reach traces? add P4 and P43.
-**REFUSE.** Scatter-shot `logger.info` as the primary observability;
-static threshold paging; logs that cannot be joined by one trace ID.
+K: telemetry, logs, metrics, alerts, tracing, observability, SLO, paging
+M: P42, P45, P63
+A: latency-critical daemon -> P30; PII can reach traces -> P4, P43
+R: scatter-shot logger.info as primary observability; static threshold paging; logs unjoinable by one trace ID
 
 ### N12 · Config / feature flags
-**MANDATORY.** P47 (epoch-pinned config snapshots). Flags specifically:
-P44 (expiresAt + owner or the flag does not merge).
-**ASK.** Forked/snapshot workers? add P28 (snapshot epoch pinning).
-Per-request consistency questions? P47 already covers; do not add a
-second mechanism.
-**REFUSE.** Live-reloaded globals read mid-request; permanent "flags"
-that are really configuration (route to P47).
+K: config, feature flag, settings, toggle, expiry of flags
+M: P47, P44
+A: forked or snapshot workers -> P28; per-request consistency -> P47 covers it, do not add a second mechanism
+R: live-reloaded globals read mid-request; permanent flags that are really configuration, route to P47
 
 ### N13 · Schema migration / rewrite
-**MANDATORY.** P6 (shadow-write parity gate for risky rewrites),
-expand-contract shape.
-**ASK.** Ledger or accounting data? add P19 (checksum diff oracle).
-Event-sourced store? project rebuild (T21) instead of row migration.
-Replacing a legacy path end to end? extend to N21 (P58 strangler, P59
-adapter at the seam).
-**REFUSE.** Big-bang cutover without parity evidence; migrations
-without a tested rollback.
+K: migration, schema, rewrite, expand-contract, alter, cutover
+M: P6
+A: ledger or accounting data -> P19; event-sourced store -> T21 project rebuild; replacing a legacy path end to end -> N21, P58, P59
+R: big-bang cutover without parity evidence; migrations without a tested rollback
 
 ### N14 · Client state / optimistic UI
-**MANDATORY.** T43 (declarative rendering), P5 (generation tags on
-mutations).
-**ASK.** Offline-capable? add T25 + T23 (local-first sync). Long
-structured flows? add P10 (zipper continuations). Server-owned flow?
-add T45 (hypermedia transitions) instead of a mirrored client machine.
-Heavy nested data? add P3 (query hoisting).
-**REFUSE.** Manual DOM/listener synchronization; duplicating the server
-state machine in the client without T45.
+K: UI, client state, optimistic, form, frontend, render, autosave
+M: T43, P5
+A: offline-capable -> T25, T23; long structured flows -> P10; server-owned flow -> T45; heavy nested data -> P3
+R: manual DOM or listener synchronization; mirrored client state machine without T45
 
 ### N15 · Numerical kernel / backtest
-**MANDATORY.** P12 (units), P13 (as-of causal horizon), P14
-(deterministic reductions), P15 (Finite<T> traps).
-**ASK.** Live and historical paths? add P20 (unified replay envelope).
-Parallelism? P14 is already mandatory; do not add ad-hoc reductions.
-**REFUSE.** Naive threaded float sums; joins on calendar-date equality;
-`NaN`-tolerant pipelines.
+K: numerical, kernel, backtest, float, NaN, quant, matrix, feature compute
+M: P12, P13, P14, P15
+A: live and historical paths -> P20; parallelism -> P14 is already mandatory, no ad-hoc reductions
+R: naive threaded float sums; joins on calendar-date equality; NaN-tolerant pipelines
 
 ### N16 · Replicated / distributed state
-**MANDATORY.** T33 (idempotency), T34 (fencing tokens), T38 (causal
-tokens).
-**ASK.** Offline or multi-master clients? add T23 (CRDTs) via T25.
-Rebalancing expected? add T41 (bounded hashing). Tenant isolation
-matters? add T42 (shuffle sharding).
-**REFUSE.** Dual writes (use T32); leader leases without fencing;
-wall-clock ordering assumptions.
+K: distributed, replication, consensus, leader, shard, replicas, multi-master
+M: T33, T34, T38
+A: offline or multi-master clients -> T23 via T25; rebalancing expected -> T41; tenant isolation matters -> T42
+R: dual writes, use T32; leader leases without fencing; wall-clock ordering assumptions
 
 ### N17 · New repo / module skeleton
-**MANDATORY.** T13 (functional core, imperative shell), T11 (structured
-concurrency), P48 (layering fitness gate in CI), plus PATTERN-CORE §3
-baseline tier for the applicable domains.
-**ASK.** Quant domain? add N15 mandatory set. Agents? add N05 mandatory
-set. Money? add N03 mandatory set. Compiler or multi-stage pipeline?
-add P96 (verify-every-layer). Domain data platform? add P102
-(ontology + lineage). Capacity headroom as a requirement? add P100
-(margin budgets).
-**REFUSE.** Speculative factories (R1); interface seams added for
-mocking (R2); layers without a fitness gate.
+K: repo, skeleton, new project, module, bootstrap, scaffold
+M: T13, T11, P48
+A: quant domain -> N15 M set; agents -> N05 M set; money -> N03 M set; compiler or multi-stage pipeline -> P96; domain data platform -> P102; capacity headroom as a requirement -> P100
+R: speculative factories (R1); interface seams added for mocking (R2); layers without a fitness gate
 
 ### N18 · Rate limiting / load control
-**MANDATORY.** T35 (adaptive concurrency limits), P27 (criticality
-propagation).
-**ASK.** Multi-tenant fairness? add P22 (DRR). Client-side
-counterpart? add P24 (retry budgets).
-**REFUSE.** Static thresholds as the only control; criticality
-vocabularies where everything is P0 (R8).
+K: rate limit, load, shedding, concurrency limit, throttle, overload
+M: T35, P27
+A: multi-tenant fairness -> P22; client-side counterpart -> P24
+R: static thresholds as the only control; criticality vocabularies where everything is P0 (R8)
 
 ### N19 · Inbound webhook receiver
-**MANDATORY.** P54 (signature verify, persist-then-process, dedupe on
-delivery ID).
-**ASK.** Consumer needs current state more than event order? add P9
-semantics (re-pull on ping). Payload feeds projections? add T32 (the
-stored payload rides the outbox). Payload feeds an agent? add P31
-(untrusted input).
-**REFUSE.** Trusting sender claims without signature verification;
-processing inline inside the HTTP handler; state mutations keyed on
-delivery order.
+K: webhook, inbound, callback, signature, delivery
+M: P54
+A: consumer needs current state over event order -> P9; payload feeds projections -> T32; payload feeds an agent -> P31
+R: trusting sender claims without signature verification; inline processing inside the HTTP handler; mutations keyed on delivery order
 
 ### N20 · Backfill / bulk data job
-**MANDATORY.** P56 (idempotent units, checkpoint table, pacing).
-**ASK.** Backfill accompanies a rewrite? add N13 (P6 parity gate).
-Verifying ledger-shaped data? add P19 (checksum pass). Multi-tenant
-tables? pace within P22 fairness so the backfill is just another tenant.
-**REFUSE.** Unbounded `UPDATE` loops with no checkpoint; backfills on
-hot tables without batching and pacing; non-idempotent backfill steps.
+K: backfill, bulk, data job, recompute, migration of rows
+M: P56
+A: accompanies a rewrite -> N13, P6; verifying ledger-shaped data -> P19; multi-tenant tables -> pace within P22
+R: unbounded UPDATE loops with no checkpoint; backfills on hot tables without batching; non-idempotent backfill steps
 
 ### N21 · Risky release / rewrite
-**MANDATORY.** P58 (strangler fig: intercept at a seam, slice by
-slice, per-slice rollback).
-**ASK.** Legacy model at the boundary? add P59 (anti-corruption
-adapter) and P1 (compatibility lenses). Data parity between old and
-new? add P6 (shadow parity) per slice. Routing switches? carry P44
-expiries so the scaffolding dies on a date.
-**REFUSE.** Big-bang cutover; parallel-run scaffolding with no expiry;
-a strangler with no traffic seam (if you cannot intercept, you cannot
-safely rewrite).
+K: release, rewrite, strangler, legacy, cutover, migration of traffic
+M: P58
+A: legacy model at the boundary -> P59, P1; data parity between old and new -> P6; routing switches -> P44 expiries
+R: big-bang cutover; parallel-run scaffolding with no expiry; a strangler with no traffic seam
 
 ### N22 · Test suite design
-**MANDATORY.** P64 (properties over generated inputs for pure cores),
-P68 (builders, no shared mutable fixtures).
-**ASK.** Legacy or undocumented code under test? add P65 (golden
-masters as characterization). Golden masters already in CI? add P97
-(auto-blessing). Parser or protocol edge? add P67
-(structure-aware fuzzing) and P29 (fault shapes). Suite suspects weak?
-add P66 (mutation audit, scheduled). Suite over ~50 tests with flakes?
-add P69 (quarantine with expiry). Regulated or safety-critical target?
-add P99 (MC/DC gates). ORM list views under test? add P109 (query-count
-assertions).
-**REFUSE.** Mock-driven suites (R2: pure core plus integration instead);
-snapshots as the only spec for new code (they canonize current bugs);
-coverage percentages quoted as strength (P66 measures strength).
+K: test, suite, coverage, flaky, property, fuzz, assertion strength
+M: P64, P68
+A: legacy or undocumented code -> P65; golden masters already in CI -> P97; parser or protocol edge -> P67, P29; suite suspects weak -> P66; over ~50 tests with flakes -> P69; regulated or safety-critical target -> P99; ORM list views under test -> P109
+R: mock-driven suites (R2); snapshots as the only spec for new code; coverage percentages quoted as strength
 
 ### N23 · API surface design
-**MANDATORY.** P72 (uniform error envelope with a code registry).
-**ASK.** List endpoints? add P73 (allowlisted filters, stable sort,
-cursor-only). Consumers outside the deploy unit? add P70 (tolerant
-reader), P57 (contracts), P71 (schema registry). Long-lived external
-API? add P74 (deprecation protocol from announcement day).
-**REFUSE.** Per-endpoint error shapes; silent-ignore of unknown query
-params; breaking removals without the P74 window; offset pagination
-(R5 again: N01 owns it).
+K: API design, error shape, contract, public schema, deprecation, endpoint design
+M: P72
+A: list endpoints -> P73; consumers outside the deploy unit -> P70, P57, P71; long-lived external API -> P74
+R: per-endpoint error shapes; silent-ignore of unknown query params; breaking removals without the P74 window; offset pagination, N01 owns it
 
 ### N24 · Deploy / release a service
-**MANDATORY.** P79 (build once, promote by digest, attested).
-**ASK.** Risky behavioral change? add P75 (canary with automated
-analysis). Revert speed dominates? add P76 (blue-green; migrations must
-be expand-contract per N13). Rewrite needs real-input validation? add
-P77 (shadow traffic). User-visible feature? add P78 (progressive
-cohorts via P44 flags). Full-sequence rehearsal before release? add
-P98 (extend to N29). Capacity margin for the new version? add P100.
-**REFUSE.** Deploying artifacts not bit-identical to CI-tested ones;
-canaries without automated analysis (a manual canary is a lottery);
-shadow traffic with ungated side effects.
+K: deploy, release, canary, rollout, artifact, ship
+M: P79
+A: risky behavioral change -> P75; revert speed dominates -> P76; rewrite needs real-input validation -> P77; user-visible feature -> P78; full-sequence rehearsal -> P98, N29; capacity margin for the new version -> P100
+R: artifacts not bit-identical to CI-tested ones; canaries without automated analysis; shadow traffic with ungated side effects
 
 ### N25 · PII store / processing
-**MANDATORY.** P4 (redaction on every egress), P43 (per-entity DEKs so
-deletion is a key drop).
-**ASK.** Subject export requests in scope? add P81 (DSAR pipeline).
-Consent-gated purposes? add P80 (consent facts) and P82 (purpose
-tags). Audit requirements? add P83 (hash chain). Analytics feeds on
-PII-bearing tables? add P82 before the first feed ships. Publishing
-derived datasets? extend to N31 (P110 leads the contract).
-**REFUSE.** PII without a purpose tag reaching analytics or training;
-manual queries as the DSAR answer; plaintext PII in append-only
-stores without a DEK.
+K: PII, privacy, personal data, GDPR, redact, delete user, subject rights
+M: P4, P43
+A: subject export requests in scope -> P81; consent-gated purposes -> P80, P82; audit requirements -> P83; analytics feeds on PII-bearing tables -> P82; publishing derived datasets -> N31
+R: untagged PII reaching analytics or training; manual queries as the DSAR answer; plaintext PII in append-only stores without a DEK
 
 ### N26 · Trading execution
-**MANDATORY.** P17 (risk tokens before submission), P20 (replay
-envelope for live and historical), P92 (kill switch wired into every
-order path).
-**ASK.** Parent orders large relative to venue liquidity? add P87
-(slicing). Multi-venue? add P88 (routing by effective cost). Broker on
-the other side? add P89 (fill reconciliation) and P90 (slippage
-benchmarks). Venue data feeds? add P91 (budget adaptation). Feed
-handler wedge protection? add P94 (watchdog + heartbeat).
-**REFUSE.** Order paths without a halt check (N26 does not exist
-without P92); single-clip parent orders on thin venues; positions
-adjusted from unreconciled fills.
+K: trading, order, execution, venue, fill, broker, position
+M: P17, P20, P92
+A: parent orders large vs venue liquidity -> P87; multi-venue -> P88; broker on the other side -> P89, P90; venue data feeds -> P91; feed handler wedge protection -> P94
+R: order paths without a halt check, N26 does not exist without P92; single-clip parent orders on thin venues; positions adjusted from unreconciled fills
 
 ### N27 · Secrets & identity
-**MANDATORY.** P84 (workload identity for service-to-service), P85
-(rotation path with overlap window).
-**ASK.** Incident access needed? add P86 (break-glass; and retire any
-standing admin credential it replaces). External static secrets
-remain? broker through a vault with audit. Audit-chain requirements?
-add P83 for the access records.
-**REFUSE.** Shared static secrets in environment variables (R4
-adjacent: ambient authority); credentials without a rotation path;
-admin access without expiry or audit.
-
-### N29 · Release rehearsal
-**MANDATORY.** P98 (rehearse the complete production sequence against
-production fidelity, same gates as release).
-**ASK.** Continuous rehearsal on real traffic? add P77 (shadow
-traffic). Replay of historical sequences? add P20 + T36 (the envelope
-plus deterministic replay). Production fault drill during rehearsal?
-add P101. Degraded-tier rehearsal? add P93 (the degraded path is part
-of the sequence).
-**REFUSE.** Rehearsal on toy or sanitized data (P50's failure mode);
-rehearsal gates looser than release gates; happy-path-only rehearsals.
+K: secrets, identity, credential, key rotation, mTLS, vault
+M: P84, P85
+A: incident access needed -> P86, retire any standing admin credential it replaces; external static secrets remain -> vault with audit; audit-chain requirements -> P83
+R: shared static secrets in environment variables (R4 adjacent); credentials without a rotation path; admin access without expiry or audit
 
 ### N28 · Degraded-mode / fail-operational design
-**MANDATORY.** P93 (tiers defined, auto-entered, auto-exited).
-**ASK.** Hung-component detection? add P94 (progress heartbeats).
-Sensor or input redundancy? add P95 (2oo3 voting). Capacity headroom
-accounting? add P100 (margin budgets). Production validation of the
-degradation paths? add P101 (chaos drills).
-**REFUSE.** Degradation tiers without tested exit criteria; shed lists
-that grow unbounded; fail-safe designs for functions that must keep
-serving.
+K: degraded, fail-operational, partial outage, watchdog, voting, shed
+M: P93
+A: hung-component detection -> P94; sensor or input redundancy -> P95; capacity headroom accounting -> P100; production validation of degradation paths -> P101
+R: degradation tiers without tested exit criteria; shed lists that grow unbounded; fail-safe designs for functions that must keep serving
+
+### N29 · Release rehearsal
+K: rehearsal, dress rehearsal, test like you fly, game day, pre-release run
+M: P98
+A: continuous rehearsal on real traffic -> P77; replay of historical sequences -> P20, T36; production fault drill -> P101; degraded-tier rehearsal -> P93
+R: rehearsal on toy or sanitized data (P50's failure mode); gates looser than release gates; happy-path-only rehearsals
 
 ### N30 · Outbound calls & time budgets
-**MANDATORY.** P103 (deadline stamped at entry, propagated on every
-hop, checked before expensive work).
-**ASK.** Resolver resilience? add P104 (stale-while-error fallbacks,
-bounded TTLs). Token-consuming client? add P114 (JWT validation
-discipline). Scheduled or cron-shaped work? add P105 (overlap guards).
-Database sessions in the path? add P106 (session hygiene guards).
-**REFUSE.** Outbound calls without explicit timeouts; retrying past
-the caller's deadline; fire-and-forget work that inherits a dead
-caller's budget instead of issuing its own.
+K: timeout, deadline, hang, call budget, propagation, stalled call
+M: P103
+A: resolver resilience -> P104; token-consuming client -> P114; scheduled or cron-shaped work -> P105; database sessions in the path -> P106
+R: outbound calls without explicit timeouts; retrying past the caller's deadline; fire-and-forget work inheriting a dead caller's budget
 
 ### N31 · Dataset publishing
-**MANDATORY.** P110 (schema, freshness, volume, and semantic
-expectations enforced at the publish gate).
-**ASK.** Publishing from streams or outboxes? add T32 (the publish
-discipline). Scheduled compute behind the dataset? add P105 (overlap
-guards) and P56 (checkpointed rebuilds). Feeding models? add P111
-(skew guards at the consumer). PII-bearing datasets? add P4, P43, and
-the N25 obligations. Cost-heavy queries? add P119 (cost budgets at
-parse time).
-**REFUSE.** Publishing without expectation tests; silent schema drift
-past the gate; freshness SLOs nobody measures; exploratory notebooks
-shipped as contracts.
+K: dataset, publish, expectation, freshness, data contract, table release
+M: P110
+A: publishing from streams or outboxes -> T32; scheduled compute behind the dataset -> P105, P56; feeding models -> P111; PII-bearing datasets -> P4, P43, N25; cost-heavy queries -> P119
+R: publishing without expectation tests; silent schema drift past the gate; freshness SLOs nobody measures; notebooks shipped as contracts
 
 ## Worked chains
 
-Common task shapes pre-resolved through the union rule; use them as
-calibration for the traversal.
+Common task shapes pre-resolved through the union rule; calibration
+for the traversal.
 
 | Task statement | Nodes | Emitted set (beyond shared mandatory) |
 |---|---|---|
@@ -393,51 +275,15 @@ calibration for the traversal.
 | "Paginated admin table over a multi-tenant audit log" | N01 + N10 | P7, T8, P41; plus P43 if PII is stored, P4 on render |
 | "Rewrite the billing ingest path" | N13 + N21 | P6, P19 (ledger checksums), P58, P59 at the legacy seam, P44 expiries on routing flags |
 
-## Overview
-
-```mermaid
-graph TD
-  START[Task] --> CLS{Classify}
-  CLS --> N01[N01 paginated API]
-  CLS --> N02[N02 write endpoint]
-  CLS --> N03[N03 money movement]
-  CLS --> N04[N04 workflow]
-  CLS --> N05[N05 agent tool call]
-  CLS --> N06[N06 cache]
-  CLS --> N07[N07 HTTP client]
-  CLS --> N08[N08 worker pool]
-  CLS --> N09[N09 scheduler]
-  CLS --> N10[N10 authz]
-  CLS --> N11[N11 telemetry]
-  CLS --> N12[N12 config/flags]
-  CLS --> N13[N13 migration]
-  CLS --> N14[N14 client state]
-  CLS --> N15[N15 numerical kernel]
-  CLS --> N16[N16 distributed state]
-  CLS --> N17[N17 repo skeleton]
-  CLS --> N18[N18 load control]
-  CLS --> N19[N19 webhook receiver]
-  CLS --> N20[N20 backfill job]
-  CLS --> N21[N21 risky release]
-  CLS --> N22[N22 test suite]
-  CLS --> N23[N23 API surface]
-  CLS --> N24[N24 deploy/release]
-  CLS --> N25[N25 PII processing]
-  CLS --> N26[N26 trading execution]
-  CLS --> N27[N27 secrets/identity]
-  CLS --> N28[N28 degraded modes]
-  CLS --> N29[N29 release rehearsal]
-  CLS --> N30[N30 time budgets]
-  CLS --> N31[N31 dataset publishing]
-  N01 & N02 & N03 & N04 & N05 & N06 & N07 & N08 & N09 & N10 & N11 & N12 & N13 & N14 & N15 & N16 & N17 & N18 & N19 & N20 & N21 & N22 & N23 & N24 & N25 & N26 & N27 & N28 & N29 & N30 & N31 --> OUT[MANDATORY set + ASK branches + REFUSE edges]
-```
-
 ## Maintenance rules
 
 1. New node: a task class appearing in three or more estate repos, with
-   MANDATORY drawn only from canon IDs and REFUSE edges that cite a
-   refusal (R1-R8) or a named failure mode.
-2. Node edits are canon changes: CHANGELOG entry; MANDATORY additions
-   that promote a non-baseline pattern need an ADR.
-3. The graph never contradicts PATTERN-CORE §3; MANDATORY sets are
-   supersets of the baseline tier for their domain.
+   M drawn only from canon IDs and R edges citing a refusal (R1-R12) or
+   a named failure mode. K lines carry the classification keywords.
+2. Node edits are canon changes: CHANGELOG entry; M additions that
+   promote a non-baseline pattern need an ADR.
+3. The graph never contradicts PATTERN-CORE §3; M sets are supersets of
+   the baseline tier for their domain.
+4. `scripts/route.py` parses the K/M/A/R format; run it as the format
+   regression test after any edit (`make check` covers it via
+   check-canon's structural pass plus a route smoke call).

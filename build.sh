@@ -64,6 +64,8 @@ PREV=$(pin "$PATTERN_CANON")
 mkdir -p skills/pattern-standards/references
 cp "$PATTERN_CANON/PATTERN-CORE.md" skills/pattern-standards/references/
 cp "$PATTERN_CANON"/references/*.md skills/pattern-standards/references/
+mkdir -p skills/pattern-standards/scripts
+cp "$PATTERN_CANON/scripts/route.py" skills/pattern-standards/scripts/route.py
 sed -i "s/^rev: .*/rev: $PREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/pattern-standards/PROVENANCE.yml
 VLREV=$(pin "$STANDARDS_CANON")
 cp "$STANDARDS_CANON/scripts/voice-lint.py" scripts/voice-lint.py

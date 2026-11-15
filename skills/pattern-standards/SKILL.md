@@ -29,22 +29,13 @@ default-adopt where domain applies), **P** field constructs P1–P50
 (problem-driven, adopt only on the named trigger), **X** frontier X1–X7
 (pilot + ADR only).
 
-## Routing: task type first, then failure mode
+## Routing: script first, then graph, then failure mode
 
-1. Classify the task into a decision-graph node. The 31 nodes span
-   paginated APIs, write endpoints, money movement, workflows, agent
-   tool calls, caches, HTTP clients, worker pools, schedulers, authz,
-   telemetry, config, migrations, client state, numerical kernels,
-   distributed state, repo skeletons, load control, webhook receivers,
-   backfills, risky releases, test suites, API surfaces, deploys, PII
-   processing, trading execution, secrets, degraded modes, release
-   rehearsals, time budgets, and dataset publishing. The index with
-   per-node MANDATORY sets is at the top of
-   `references/decision-graph.md`.
-2. Open `references/decision-graph.md` at that node. Its MANDATORY set,
-   ASK branches, and REFUSE edges are the design; do not weigh
-   alternatives. An ASK predicate you cannot answer from the task
-   requirements goes to the user as a question.
+1. Traverse in one call: `python3 scripts/route.py --task "<task>"`
+   (vendored; parses decision-graph.md and prints the node's M/A/R
+   block; exit 1 lists candidates and states the union rule).
+2. Script ambiguous? Open `references/decision-graph.md` §node index
+   and classify by hand; multi-node tasks union their M sets.
 3. No node fits the task? Route by failure mode below.
 
 ## Route by failure mode
