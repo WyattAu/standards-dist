@@ -7,6 +7,7 @@ truth.
 | Projection | Canon | Contents |
 |---|---|---|
 | `skills/spec-standards` | [spec-standards](https://github.com/WyattAu/spec-standards) | SPEC-CORE + DOC-STYLE references, the two gate scripts, adoption/authoring procedures |
+| `skills/pattern-standards` | [pattern-standards](https://github.com/WyattAu/pattern-standards) | PATTERN-CORE catalog + per-domain pattern references (107 constructs, baseline tier, refusals) |
 | `skills/engineering-standards` | [engineering-standards](https://github.com/WyattAu/engineering-standards) | OMNI-CORE reference, scaffold/tier/audit procedures |
 | `mcp/standards_mcp.py` | both | read-only MCP stdio server: doc_lint, spec_audit, conformance_checklist, estate_status |
 

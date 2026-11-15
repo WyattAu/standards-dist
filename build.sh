@@ -6,6 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 SPEC_CANON="${SPEC_CANON:-$HOME/dev/src/spec-standards}"
 ENG_CANON="${ENG_CANON:-/tmp/opencode/rollout/eng}"
+PATTERN_CANON="${PATTERN_CANON:-$HOME/dev/src/github.com/WyattAu/pattern-standards}"
 
 pin() { git -C "$1" rev-parse --short HEAD; }
 
@@ -59,4 +60,9 @@ for f in present agentspeak; do
 done
 sed -i "s/^rev: .*/rev: $SREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/spec-standards/PROVENANCE.yml
 sed -i "s/^rev: .*/rev: $EREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/engineering-standards/PROVENANCE.yml
-echo "rebuilt projections (spec=$SREV eng=$EREV standards=$STDREV)"
+PREV=$(pin "$PATTERN_CANON")
+mkdir -p skills/pattern-standards/references
+cp "$PATTERN_CANON/PATTERN-CORE.md" skills/pattern-standards/references/
+cp "$PATTERN_CANON"/references/*.md skills/pattern-standards/references/
+sed -i "s/^rev: .*/rev: $PREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/pattern-standards/PROVENANCE.yml
+echo "rebuilt projections (spec=$SREV eng=$EREV standards=$STDREV patterns=$PREV)"
