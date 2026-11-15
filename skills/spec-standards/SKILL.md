@@ -2,12 +2,10 @@
 name: wyattau-spec-standards
 description: |
   Write and adopt WyattAu specifications and documentation per SPEC-CORE:
-  authoring SPEC.md with numbered normative sections, status stamps
-  (DRAFT/REVIEW/CURRENT/FROZEN/SUPERSEDED), truth tables ("Where the truth
-  lives"), REQ traceability anchors, executable-oracle lines, llms.txt
+  authoring SPEC.md with numbered normative sections, status stamps,
+  truth tables, REQ traceability anchors, executable-oracle lines, llms.txt
   projections; adopting the shared docs gate at tier s/k/a/d; diagnosing
-  doc-lint or spec-audit failures (em-dash rule, missing truth table,
-  placeholder projections, stale stamps); running estate sweeps. Load when
+  doc-lint or spec-audit failures; running estate sweeps. Load when
   creating a repo, writing or reviewing a spec, wiring the docs workflow,
   or fixing a docs CI failure in the WyattAu estate.
 allowed-tools: read, bash

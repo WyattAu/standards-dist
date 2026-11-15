@@ -3,12 +3,11 @@ name: wyattau-engineering-standards
 description: |
   Apply the WyattAu engineering standards (OMNI-CORE): scaffold a new repo
   from the Omni templates, choose the CI gate tier (A/B/C) and wire the
-  shared rust-kit workflow, honor the twelve invariants (scripts canonical,
-  Nix devShell, merge queue, agent-facing AGENTS.md/llms.txt, SBOM, formal
-  verification, projection freshness), interpret estate-audit output
-  (pin drift, coverage debt), and follow DOC-STYLE register/citation rules.
-  Load when creating a repo in the WyattAu estate, wiring CI, publishing a
-  crate, or answering "is this allowed by the estate contract".
+  shared rust-kit workflow, honor the twelve invariants, interpret
+  estate-audit output (pin drift, coverage debt), and follow DOC-STYLE
+  register/citation rules. Load when creating a repo in the WyattAu estate,
+  wiring CI, publishing a crate, or answering "is this allowed by the
+  estate contract".
 allowed-tools: read, bash
 license: Apache-2.0
 ---

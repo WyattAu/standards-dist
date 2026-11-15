@@ -30,6 +30,20 @@ default-adopt where domain applies), **P** field constructs P1–P50
 (problem-driven, adopt only on the named trigger), **X** frontier X1–X7
 (pilot + ADR only).
 
+## Routing: task type first, then failure mode
+
+1. Classify the task into a decision-graph node (N01 paginated API,
+   N02 write endpoint, N03 money movement, N04 workflow, N05 agent tool
+   call, N06 cache, N07 HTTP client, N08 worker pool, N09 scheduler,
+   N10 authz, N11 telemetry, N12 config/flags, N13 migration, N14
+   client state, N15 numerical kernel, N16 distributed state, N17 repo
+   skeleton, N18 load control).
+2. Open `references/decision-graph.md` at that node. Its MANDATORY set,
+   ASK branches, and REFUSE edges are the design; do not weigh
+   alternatives. An ASK predicate you cannot answer from the task
+   requirements goes to the user as a question.
+3. No node fits the task? Route by failure mode below.
+
 ## Route by failure mode
 
 | Symptom | Load | IDs |

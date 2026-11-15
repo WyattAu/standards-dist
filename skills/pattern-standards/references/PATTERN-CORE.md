@@ -45,6 +45,8 @@ Field-series domains: `field-fullstack.md` (P1–P10), `field-numerical.md`
 (P31–P40), `field-security.md` (P41–P50). Foundations domains:
 types/algebra (T1–T10), execution/reactive (T11–T20), state/time
 (T21–T30), distributed (T31–T42), interfaces/security/AI (T43–T50).
+Pattern selection per task type is a graph traversal, not a choice:
+§9 and `references/decision-graph.md`.
 
 ## 3. Baseline tier
 
@@ -228,3 +230,34 @@ A standard that only lists virtues is not a standard.
 | X5 | Gauge-symmetric domain operators | conservation-breaking mutations | Pilot |
 | X6 | Anytime optimal stopping | brittle timeouts | Pilot |
 | X7 | Morphism-driven refactoring | speculative abstractions | Doctrine |
+
+## 9. Task routing graph
+
+Pattern selection is a traversal, not a judgment call: classify the
+task into a node, take its MANDATORY set, walk its ASK predicates,
+obey its REFUSE edges. Full algorithm and edges:
+`references/decision-graph.md`.
+
+| Node | Task | MANDATORY |
+|---|---|---|
+| N01 | Paginated collection API | P7 |
+| N02 | Mutating write endpoint | T1, T33, P42, P47 |
+| N03 | Money movement or split | T27, P11, P12 |
+| N04 | Multi-service workflow | T31, T32, T19 |
+| N05 | Agent tool call / LLM output | T48, T50, P33, P37 |
+| N06 | Cache layer | P21 |
+| N07 | Outbound HTTP client | P24, T33 |
+| N08 | Multi-tenant worker pool | P22, P23, P42 |
+| N09 | Scheduler / recurrence | P8 |
+| N10 | Authz / tenant data access | T8, P41 |
+| N11 | Telemetry setup | P42, P45 |
+| N12 | Config / feature flags | P47, P44 |
+| N13 | Schema migration / rewrite | P6 |
+| N14 | Client state / optimistic UI | T43, P5 |
+| N15 | Numerical kernel / backtest | P12, P13, P14, P15 |
+| N16 | Replicated / distributed state | T33, T34, T38 |
+| N17 | New repo / module skeleton | T13, T11, P48 + §3 baseline |
+| N18 | Rate limiting / load control | T35, P27 |
+
+Two nodes apply to one task: union the MANDATORY sets and answer both
+ASK chains. Unknown ASK predicate: ask the user; never guess.

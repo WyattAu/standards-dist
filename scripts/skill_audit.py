@@ -85,7 +85,7 @@ def audit_skill(d: Path) -> dict:
             r["violations"].append(f"description: {wc_desc} chars > {DESC_HARD} hard cap")
         elif wc_desc < DESC_TARGET[0]:
             r["warnings"].append(f"description: {wc_desc} chars < {DESC_TARGET[0]} target")
-        if not re.search(r"[Uu]se when|[Ll]oad when|[Tt]rigger", desc):
+        if not re.search(r"[Uu]se (when|before|after|with|for)\b|[Ll]oad (when|for|before)\b|[Tt]rigger", desc):
             r["violations"].append("description: no trigger phrase (Use when / Load when)")
         if not re.search(r"[Dd]oes not", desc):
             r["warnings"].append("description: no scope limit (Does not: ...)")
