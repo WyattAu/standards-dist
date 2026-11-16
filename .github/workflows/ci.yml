@@ -1,20 +1,33 @@
+# Dist gate: pins must be current (SC-11), the register must be clean,
+# and the vendored routers must run. The canons gate their own content.
 name: ci
 on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: "23 4 * * *"
 permissions:
   contents: read
 jobs:
-  projections:
+  ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - name: SC-11 freshness (stale projections fail)
-        run: ./build.sh --check
-      - name: token benchmark (AGENTSPEAK: tokens are the budget)
-        run: python3 scripts/token_benchmark.py
-      - name: register gate (estate voice-lint, strict)
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: WyattAu/standards
+          path: standards-can
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Pin freshness (SC-11)
+        run: bash build.sh --check
+      - name: Register clean (voice-lint over SKILL.md + root docs)
+        run: python3 standards-can/scripts/voice-lint.py --strict README.md llms.txt AGENTS.md skills/*/SKILL.md
+      - name: Router smoke (pattern + seo + context parse)
         run: |
-          git clone --quiet --depth 1 https://github.com/WyattAu/standards.git standards-canon
-          python3 standards-canon/scripts/voice-lint.py --strict .
+          python3 skills/pattern-standards/scripts/route.py --node N08 >/dev/null
+          python3 skills/pattern-standards/scripts/route.py --list >/dev/null
+      - name: Skill budgets
+        run: python3 scripts/skill_audit.py skills/pattern-standards skills/context-standards skills/spec-standards skills/engineering-standards skills/present skills/agentspeak
