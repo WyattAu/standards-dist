@@ -90,13 +90,13 @@ A: money fields -> N03; PII in payload -> P4, P43; downstream retry-exposed call
 R: fire-and-forget writes that skip the outbox, route through N04's T32 or do not emit
 
 ### N03 · Money movement or split
-K: money, payment, split, fee, billing, cents, ledger, charge, refund, invoice, price
+K: money, payment, split, fee, billing, cents, ledger, charge, refund, invoice, price, metering, usage, quota
 M: T27, P11, P12
 A: reconciled against external ledger -> P19; restatements possible -> T26; shared account across strategies -> P17
 R: floating-point money in any language; mutable balance columns as stored truth (R4); percentage math in floats
 
 ### N04 · Multi-service workflow
-K: workflow, saga, orchestration, multi-service, multi-step, compensation, choreography
+K: workflow, saga, orchestration, multi-service, multi-step, compensation, choreography, outbox, broker, domain events
 M: T31, T32, T19
 A: steps call third parties -> T33; initiated or stepped by an agent -> N05, P36; human approval gates -> P36
 R: cross-service 2PC; recovery logic hand-rolled outside T19; non-idempotent compensation actions
@@ -120,7 +120,7 @@ A: tail-latency-sensitive reads -> T39; business tiers -> P27; parses third-part
 R: unbounded exponential backoff; retries on non-idempotent endpoints without T33; bare calls with no breaker state
 
 ### N08 · Multi-tenant worker pool
-K: worker, queue, pool, job, background, tenant fairness, cron in pool
+K: worker, queue, pool, job, background, tenant fairness, cron in pool, dead-letter, poison
 M: P22, P23, P42
 A: poison-tenant blast radius -> T42; latency-critical jobs -> P30; fault paths tested -> P29; daemon wedge detection -> P94; scheduled jobs in the pool -> P105
 R: one shared FIFO across tenants; detached tasks outside an AbortScope
@@ -168,7 +168,7 @@ A: live and historical paths -> P20; parallelism -> P14 is already mandatory, no
 R: naive threaded float sums; joins on calendar-date equality; NaN-tolerant pipelines
 
 ### N16 · Replicated / distributed state
-K: distributed, replication, consensus, leader, shard, replicas, multi-master
+K: distributed, replication, consensus, leader, shard, replicas, multi-master, partition, drift
 M: T33, T34, T38
 A: offline or multi-master clients -> T23 via T25; rebalancing expected -> T41; tenant isolation matters -> T42
 R: dual writes, use T32; leader leases without fencing; wall-clock ordering assumptions
@@ -216,7 +216,7 @@ A: list endpoints -> P73; consumers outside the deploy unit -> P70, P57, P71; lo
 R: per-endpoint error shapes; silent-ignore of unknown query params; breaking removals without the P74 window; offset pagination, N01 owns it
 
 ### N24 · Deploy / release a service
-K: deploy, release, canary, rollout, artifact, ship
+K: deploy, release, canary, rollout, artifact, ship, blue-green, revert, flip, launch
 M: P79
 A: risky behavioral change -> P75; revert speed dominates -> P76; rewrite needs real-input validation -> P77; user-visible feature -> P78; full-sequence rehearsal -> P98, N29; capacity margin for the new version -> P100
 R: artifacts not bit-identical to CI-tested ones; canaries without automated analysis; shadow traffic with ungated side effects
@@ -240,13 +240,13 @@ A: incident access needed -> P86, retire any standing admin credential it replac
 R: shared static secrets in environment variables (R4 adjacent); credentials without a rotation path; admin access without expiry or audit
 
 ### N28 · Degraded-mode / fail-operational design
-K: degraded, fail-operational, partial outage, watchdog, voting, shed
+K: degraded, fail-operational, partial outage, watchdog, voting, shed, dies, serving, degrade
 M: P93
 A: hung-component detection -> P94; sensor or input redundancy -> P95; capacity headroom accounting -> P100; production validation of degradation paths -> P101
 R: degradation tiers without tested exit criteria; shed lists that grow unbounded; fail-safe designs for functions that must keep serving
 
 ### N29 · Release rehearsal
-K: rehearsal, dress rehearsal, test like you fly, game day, pre-release run
+K: rehearsal, dress rehearsal, test like you fly, game day, pre-release run, rehearse, launch, sequence
 M: P98
 A: continuous rehearsal on real traffic -> P77; replay of historical sequences -> P20, T36; production fault drill -> P101; degraded-tier rehearsal -> P93
 R: rehearsal on toy or sanitized data (P50's failure mode); gates looser than release gates; happy-path-only rehearsals
