@@ -1,0 +1,4 @@
+source: WyattAu/context-standards
+rev: 3a464af
+vendored: [references/CONTEXT-CORE.md, references/routing-contract.md, references/artifact-formats.md]
+rebuilt: "2026-11-15T16:05:42Z by build.sh"

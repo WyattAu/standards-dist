@@ -73,6 +73,15 @@ TOOLS = [
             "required": ["registry_path"],
         },
     },
+    {
+        "name": "standards_route",
+        "description": "Route a task to the governing WyattAu standards canon and its deterministic router script (patterns, SEO, spec tiers, CI tiers, prose register). Deterministic computation is a script, not prose.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"task": {"type": "string", "description": "The task or question, in plain words"}},
+            "required": ["task"],
+        },
+    },
 ]
 
 
@@ -156,11 +165,82 @@ def tool_estate_status(args):
     return {"repos_with_blocks": len(rows), "total_repos": len(repos), "blocks": rows}
 
 
+
+ROUTE_TABLE = [
+    # canon, checkout candidates, route script + base args, fallback keyword hints
+    ("pattern-standards",
+     ["~/dev/src/github.com/WyattAu/pattern-standards"],
+     "scripts/route.py", ["--task"],
+     {"pattern", "design", "architecture", "pagination", "idempotency", "cache",
+      "deadline", "circuit", "webhook", "backfill", "experiment", "margin", "skew"}),
+    ("seo-standards",
+     ["~/dev/src/github.com/WyattAu/seo-standards"],
+     "scripts/route.py", ["--task"],
+     {"seo", "search", "ranking", "sitemap", "crawl", "serp", "structured data", "index"}),
+    ("spec-standards",
+     ["~/dev/src/spec-standards", "~/dev/src/github.com/WyattAu/spec-standards"],
+     None, None,
+     {"spec", "docs tier", "truth table", "doc lint", "llms.txt", "oracle", "status stamp"}),
+    ("engineering-standards",
+     ["~/dev/src/github.com/WyattAu/engineering-standards"],
+     None, None,
+     {"ci tier", "coverage", "loom", "miri", "crate layer", "release gate"}),
+    ("standards",
+     ["~/dev/src/standards"],
+     None, None,
+     {"prose", "voice", "em dash", "writing", "register"}),
+]
+
+
+def _stem(w: str) -> str:
+    for suf in ("ing", "ion", "ies", "ed", "es", "s"):
+        if len(w) > len(suf) + 2 and w.endswith(suf):
+            return w[: -len(suf)]
+    return w
+
+
+def tool_standards_route(args):
+    """Route a task across the estate canons: delegate to each canon's
+    router script where one exists (authoritative), fall back to keyword
+    hints where the canon has no --task router. Deterministic computation
+    is a script, not prose (skill-forge doctrine)."""
+    import os
+    task = (args.get("task") or "").strip()
+    if not task:
+        return {"error": "task required"}
+    routes = []
+    for canon, roots, script, base_args, hints in ROUTE_TABLE:
+        words = {_stem(w) for w in re.findall(r"[a-z0-9]+", task.lower())}
+        kw_hit = bool(words & {_stem(k) for k in hints})
+        out_line = None
+        for root in (roots if script else []):
+            rp = Path(os.path.expanduser(root))
+            sp = rp / script
+            if not sp.is_file():
+                continue
+            argv = [sys.executable, str(sp)] + (base_args + [task] if base_args else [])
+            r = sh(argv, cwd=str(rp), timeout=30)
+            if r.returncode == 0 and r.stdout.strip():
+                out_line = ("canon-router", r.stdout.strip()[-1500:])
+                break
+            if r.returncode == 1 and kw_hit and r.stdout.strip():
+                out_line = ("canon-router-ambiguous", r.stdout.strip()[-800:])
+        if out_line:
+            routes.append({"canon": canon, "source": out_line[0],
+                           "script": f"{canon}/{script}", "output": out_line[1]})
+        elif kw_hit:
+            hint = f"{canon}/{script}" if script else f"{canon} (fact router: pass the repo path)"
+            routes.append({"canon": canon, "source": "keyword hint", "run": hint})
+    return {"task": task, "routes": routes,
+            "note": "canon-router outputs are authoritative; keyword hints mean the canon has no task router for this question"}
+
+
 HANDLERS = {
     "doc_lint": tool_doc_lint,
     "spec_audit": tool_spec_audit,
     "conformance_checklist": tool_conformance_checklist,
     "estate_status": tool_estate_status,
+    "standards_route": tool_standards_route,
 }
 
 
