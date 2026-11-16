@@ -3,7 +3,8 @@
 
 Checks per skill directory:
   name            frontmatter `name:` present, kebab-case, <=64 chars; matches
-                  dirname or the projection form `wyattau-<dirname>`
+                  dirname or the projection form `wyattau-<dir>` (trailing
+                  `-standards` may be dropped)
   description     present, non-empty, <=500 chars (hard), contains a trigger
                   phrase ("Use when"/"use when"/"Load when") and a scope limit
                   ("Does not" or "does not") per the forge contract
@@ -74,10 +75,13 @@ def audit_skill(d: Path) -> dict:
         r["violations"].append(f"frontmatter: name not kebab-case: {name!r}")
     elif len(name) > NAME_HARD:
         r["violations"].append(f"frontmatter: name >{NAME_HARD} chars")
-    elif name != d.name and name != "wyattau-" + d.name:
-        # projection convention: dir keeps the canon name, installed
-        # skill dir + frontmatter name carry the wyattau- prefix
-        r["violations"].append(f"frontmatter: name {name!r} != dir {d.name!r} (nor wyattau-{d.name!r})")
+    elif not (name == d.name
+              or name == "wyattau-" + d.name
+              or (d.name.endswith("-standards")
+                  and name == "wyattau-" + d.name[: -len("-standards")])):
+        # projection convention: dir keeps the canon name; installed
+        # name is `wyattau-<dir>` with a trailing `-standards` dropped
+        r["violations"].append(f"frontmatter: name {name!r} != dir {d.name!r} (projection form wyattau-*)")
 
     desc = fm.get("description", "")
     wc_desc = len(desc)
