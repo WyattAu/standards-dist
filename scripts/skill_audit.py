@@ -2,7 +2,8 @@
 """skill_audit: structure + cost audit for agent skills (estate-skill-forge contract).
 
 Checks per skill directory:
-  name            frontmatter `name:` present, kebab-case, <=64 chars, matches dirname
+  name            frontmatter `name:` present, kebab-case, <=64 chars; matches
+                  dirname or the projection form `wyattau-<dirname>`
   description     present, non-empty, <=500 chars (hard), contains a trigger
                   phrase ("Use when"/"use when"/"Load when") and a scope limit
                   ("Does not" or "does not") per the forge contract
@@ -73,8 +74,10 @@ def audit_skill(d: Path) -> dict:
         r["violations"].append(f"frontmatter: name not kebab-case: {name!r}")
     elif len(name) > NAME_HARD:
         r["violations"].append(f"frontmatter: name >{NAME_HARD} chars")
-    elif name != d.name:
-        r["violations"].append(f"frontmatter: name {name!r} != dir {d.name!r}")
+    elif name != d.name and name != "wyattau-" + d.name:
+        # projection convention: dir keeps the canon name, installed
+        # skill dir + frontmatter name carry the wyattau- prefix
+        r["violations"].append(f"frontmatter: name {name!r} != dir {d.name!r} (nor wyattau-{d.name!r})")
 
     desc = fm.get("description", "")
     wc_desc = len(desc)
