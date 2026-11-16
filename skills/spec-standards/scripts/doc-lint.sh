@@ -54,7 +54,16 @@ fi
 
 # --- 2. Status stamps (SPEC-CORE §5): FROZEN needs a date,
 #        SUPERSEDED needs a successor -------------------------------------
-STAMP_LINES=$(grep -rhE 'Status:.*(FROZEN|SUPERSEDED)' --include='*.md' . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=dist $EXTRA_EXCLUDES 2>/dev/null || true)
+# Fenced blocks are stripped before scanning: documenting the stamp
+# format inside a ```markdown example must not trip the checker
+# (incident: STANDARDS-MODEL.md template line flagged, 2026-11-16).
+STAMP_LINES=$(find . -name '*.md' \
+  -not -path './.git/*' -not -path './node_modules/*' -not -path './vendor/*' -not -path './dist/*' $EXTRA_EXCLUDES 2>/dev/null | \
+  xargs awk '
+    FNR == 1 { infence = 0 }
+    /^```/ { infence = !infence; next }
+    !infence && /Status:/ && /(FROZEN|SUPERSEDED)/ { print }
+  ' 2>/dev/null || true)
 while IFS= read -r LINE; do
   [ -z "$LINE" ] && continue
   case "$LINE" in
