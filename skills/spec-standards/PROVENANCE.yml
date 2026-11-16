@@ -1,4 +1,4 @@
 source: WyattAu/spec-standards
-rev: bad8f51
+rev: 22471ca
 vendored: [references/SPEC-CORE.md, references/DOC-STYLE.md, scripts/doc-lint.sh, scripts/spec-audit.py]
-rebuilt: "2026-11-15T16:05:42Z by build.sh"
+rebuilt: "2026-11-16T05:12:50Z by build.sh"

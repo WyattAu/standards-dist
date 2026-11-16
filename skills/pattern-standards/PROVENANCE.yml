@@ -1,4 +1,4 @@
 source: WyattAu/pattern-standards
-rev: b0ca3b0
+rev: c1fc432
 vendored: [references/PATTERN-CORE.md, references/catalog.md, references/decision-graph.md, references/foundations-types.md, references/foundations-execution.md, references/foundations-state.md, references/foundations-distributed.md, references/foundations-interfaces.md, references/field-fullstack.md, references/field-numerical.md, references/field-concurrency.md, references/field-agentic.md, references/field-security.md, references/field-operations.md, references/field-data-evolution.md, references/field-testing.md, references/field-api.md, references/field-networking.md, references/field-data-layer.md, references/field-ml.md, references/field-deployment.md, references/field-compliance.md, references/field-execution.md, references/field-safety.md, references/field-verification.md, references/frontier.md]
-rebuilt: "2026-11-15T16:05:42Z by build.sh"
+rebuilt: "2026-11-16T05:12:50Z by build.sh"
