@@ -4,7 +4,7 @@
 Checks per skill directory:
   name            frontmatter `name:` present, kebab-case, <=64 chars; matches
                   dirname or the projection form `wyattau-<dir>` (trailing
-                  `-standards` may be dropped)
+                  `-standards` may be dropped, optional plural `s`)
   description     present, non-empty, <=500 chars (hard), contains a trigger
                   phrase ("Use when"/"use when"/"Load when") and a scope limit
                   ("Does not" or "does not") per the forge contract
@@ -78,7 +78,7 @@ def audit_skill(d: Path) -> dict:
     elif not (name == d.name
               or name == "wyattau-" + d.name
               or (d.name.endswith("-standards")
-                  and name == "wyattau-" + d.name[: -len("-standards")])):
+                  and name.rstrip("s") == ("wyattau-" + d.name[: -len("-standards")]).rstrip("s"))):
         # projection convention: dir keeps the canon name; installed
         # name is `wyattau-<dir>` with a trailing `-standards` dropped
         r["violations"].append(f"frontmatter: name {name!r} != dir {d.name!r} (projection form wyattau-*)")
