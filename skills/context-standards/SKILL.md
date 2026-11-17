@@ -59,6 +59,14 @@ states the union rule. Fact routers: answer from repo facts and state
 the inference source. Full contract:
 `references/routing-contract.md`.
 
+## Estate audit
+
+Run the estate-wide CX check from the skill itself:
+`python3 scripts/context-audit.py --adoption` (walks the standards
+repos: L0 budgets, never-feed, llms.txt, adoption declarations; exit 1
+on violations, warnings advisory). Pass `--strict` to fail on budget
+overruns too.
+
 ## Estate standards-map
 
 Which canon governs, its router, its gate: CONTEXT-CORE §4. The MCP

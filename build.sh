@@ -71,6 +71,8 @@ CONTEXT_REV=$(pin "$CONTEXT_CANON")
 mkdir -p skills/context-standards/references
 cp "$CONTEXT_CANON/CONTEXT-CORE.md" skills/context-standards/references/
 cp "$CONTEXT_CANON"/references/*.md skills/context-standards/references/
+mkdir -p skills/context-standards/scripts
+cp "$CONTEXT_CANON/scripts/context-audit.py" skills/context-standards/scripts/
 sed -i "s/^rev: .*/rev: $CONTEXT_REV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/context-standards/PROVENANCE.yml
 sed -i "s/^rev: .*/rev: $PREV/; s/^rebuilt: .*/rebuilt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ) by build.sh\"/" skills/pattern-standards/PROVENANCE.yml
 VLREV=$(pin "$STANDARDS_CANON")
