@@ -45,3 +45,9 @@ running the property suite with an enlarged case count (e.g.
 `PROPTEST_CASES=4096`), separate from push CI. This satisfies the
 ADR-0001 "continuous fuzz" wording: each nightly run is one window in
 the cumulative evidence.
+
+## Canon repos
+
+A standards canon carries no runtime patterns; it declares itself with
+a leading `<!-- adoption: canon -->` marker and an empty table. The
+checker passes with a note instead of requiring rows.

@@ -1,4 +1,4 @@
 source: WyattAu/engineering-standards
-rev: 7c862a0
+rev: bc35a68
 vendored: [references/OMNI-CORE.md, references/DOC-STYLE.md]
-rebuilt: "2026-11-17T01:38:07Z by build.sh"
+rebuilt: "2026-11-17T02:06:46Z by build.sh"

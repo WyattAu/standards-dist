@@ -59,7 +59,7 @@ its gate. The MCP `standards_route` tool is generated from this table.
 | spec-standards | SPEC-CORE.md + DOC-STYLE.md | `scripts/doc-triage.py --repo` (fact router) | `make ci` = doc-lint + spec-audit |
 | engineering-standards | OMNI-CORE.md + scripts/ | `scripts/tier-route.py --traits` (fact router) | estate-audit + check-* library |
 | standards (L0) | STANDARDS-CORE.md + standards/* | voice-lint (prose register) | standards-audit.py |
-| context-standards | CONTEXT-CORE.md (this file) | this canon is the routing standard | voice-lint + skill_audit |
+| context-standards | CONTEXT-CORE.md (this file) | this canon is the routing standard | voice-lint + skill_audit + context-audit |
 
 Fact routers (spec, engineering) answer from repo facts and are
 keyword-hinted, not auto-run, when the task carries no repo path.
@@ -82,8 +82,10 @@ keyword-hinted, not auto-run, when the task carries no repo path.
    above and in engineering-standards estate.yml.
 2. New projection (skill/MCP tool): frontmatter per skill-forge, rev
    pin per SC-11, budget check per skill_audit.
-3. `wyattau-context` (the dist skill) is the entry point: load it when
-   writing or editing any LLM-fed artifact.
+3. Estate-wide CX enforcement: `scripts/context-audit.py --adoption`
+   (context-audit) walks the standards repos + skills; run it before
+   flippy changes. `wyattau-context` (the dist skill) is the entry
+   point: load it when writing or editing any LLM-fed artifact.
 
 ## 7. Maintenance
 
