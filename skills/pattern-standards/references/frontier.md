@@ -28,7 +28,7 @@ write an ADR before anything here becomes load-bearing.
 ### X4 · Specification-as-source (synthesized implementations)
 **Failure.** Hand-written implementation bodies are canonical; tests and contracts are shadows. Swap-in of a faster/safer implementation risks invariant breakage every time.
 **Mechanism.** The canonical module source is types + formal pre/post-conditions/invariants + resource envelopes; implementation bodies are disposable caches synthesized and verified against the spec (synthesis + property-based checking). Hot-path and debug variants interchange without invariant risk.
-**Analysis.** Speculative-to-emerging (LLM synthesis + SMT/PBT verification is real today; the *inverted module structure* is not productized). Pilot only where invariants are crisp and testable (parsers, allocators, pure kernels). Do not bet estate repos on it yet.
+**Analysis.** Emerging (the spec-as-declaration form is proven in production: accounting-spec ships a zero-sorry Lean 4 oracle as normative posting algebra, type-checked in CI, with per-currency conservation proved and a documented falsification result; the full synthesized-implementation-body form remains unproductized). Pilot only where invariants are crisp and testable; the estate has one working instance.
 **Status.** Watch-tier. **Links.** T49 (the generator-verifier loop it institutionalizes); T3/T4 (the interpreter seams it can specialize).
 
 ### X5 · Gauge-symmetric domain operators (Noether for state)
