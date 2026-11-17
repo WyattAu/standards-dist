@@ -36,7 +36,16 @@ default-adopt where domain applies), **P** field constructs P1–P50
    block; exit 1 lists candidates and states the union rule).
 2. Script ambiguous? Open `references/decision-graph.md` §node index
    and classify by hand; multi-node tasks union their M sets.
-3. No node fits the task? Route by failure mode below.
+3. No node fits the task? Route by failure mode below. The MCP
+   `standards_route` tool delegates to the canon routers from any
+   session.
+
+## Adoption declarations (M2)
+
+Repos declare pattern relationships in a root `PATTERN_ADOPTION.md`
+(format: `references/adoption-format.md`), validated by
+`scripts/adoption-check.py`. Generate or update it when a user asks
+whether a repo adopts a pattern; claims without evidence paths fail.
 
 ## Route by failure mode
 
