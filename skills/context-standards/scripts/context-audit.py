@@ -135,9 +135,26 @@ def main() -> int:
             continue
         findings += audit_repo(repo, declared_llms, a.adoption)
 
-    # adoption files, when the M2 tracker is on
+    # adoption files, when the M2 tracker is on; duplicate local checkouts
+    # of one repo (same origin, e.g. a maint worktree) are audited once
     if a.adoption:
-        for repo in repos_root.glob("*/PATTERN_ADOPTION.md"):
+        seen_origins: set[str] = set()
+        files = sorted(repos_root.glob("*/PATTERN_ADOPTION.md"))
+        spec_file = Path("~/dev/src/spec-standards/PATTERN_ADOPTION.md").expanduser()
+        if spec_file.is_file():
+            files.append(spec_file)
+        dist_file = Path(a.dist) / "PATTERN_ADOPTION.md"
+        if dist_file.is_file():
+            files.append(dist_file)
+        for repo in files:
+            origin = ""
+            probe = subprocess.run(["git", "-C", str(repo.parent), "remote", "get-url", "origin"],
+                                   capture_output=True, text=True)
+            if probe.returncode == 0:
+                origin = probe.stdout.strip()
+                if origin in seen_origins:
+                    continue
+                seen_origins.add(origin)
             r = subprocess.run([sys.executable, str(canon / "scripts" / "adoption-check.py"),
                                 "--file", str(repo)], capture_output=True, text=True)
             if r.returncode != 0:
