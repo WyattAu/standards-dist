@@ -7,7 +7,7 @@ surface for estate agents (clawdius, bot-kit, docs pipelines).
 ### P31 · Data-plane / control-plane prompt quarantine
 **Failure.** Untrusted text from emails, PDFs, or DB rows hijacks agent tool calls via prompt injection.
 **Mechanism.** Never interpolate untrusted strings into privileged planner prompts; untrusted inputs pass strictly as opaque `DataRef(#id)` handles consumed by isolated, non-privileged extractor steps.
-**Analysis.** Proven direction (OWASP LLM risks; the dual-LLM pattern). Cost: an extractor sub-step per untrusted source. Baseline-tier for estate agents that read external content (crawlkit summaries, mail bots). Refuse nowhere in that class.
+**Analysis.** Proven direction (OWASP LLM risks; the dual-LLM pattern). Cost: an extractor sub-step per untrusted source. Baseline-tier for estate agents that read external content (no estate repo implements quarantine yet; the crawlkit association was wrong -- drift-check caught it, 2026-11-20). Refuse nowhere in that class.; (crawlkit: n/a)
 **Links.** T50 (the sandbox that enforces); T8 (handles as capabilities); P4 (sensitive-wrapper at the same boundary).
 
 ### P32 · Entropy-thresholded model cascading
@@ -55,7 +55,7 @@ surface for estate agents (clawdius, bot-kit, docs pipelines).
 ### P39 · Content-addressed inference memoization
 **Failure.** Multi-step pipelines fail at step 14 of 20; every debug run re-pays steps 1–13.
 **Mechanism.** Key every LLM/embedding call on `hash(modelId, promptBytes, schemaHash, seed)` into an immutable local/S3 store; crashes and edits replay prior steps at zero cost.
-**Analysis.** Proven (memoization is old; the inference-specific key discipline is the pattern). Baseline-tier for docs-pipeline and any multi-stage estate pipeline. Refuse for interactive single-turn calls.
+**Analysis.** Proven (memoization is old; the inference-specific key discipline is the pattern). Baseline-tier for any multi-stage estate pipeline (no implementor yet; the docs-pipeline association was wrong -- drift-check caught it, 2026-11-20). Refuse for interactive single-turn calls.; (docs-pipeline: n/a)
 **Links.** T28 (content addressing); P35 (prefix pinning for live calls); P38 (when approximations are acceptable, partition first).
 
 ### P40 · Attenuable spend-lease macaroons

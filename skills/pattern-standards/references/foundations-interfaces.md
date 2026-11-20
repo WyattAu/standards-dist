@@ -36,7 +36,7 @@ stochastic engines.
 ### T48 · FSM / grammar-constrained decoding
 **Failure.** LLMs emit malformed JSON, wrong enum values, or broken tool-call syntax; retries burn latency and money.
 **Mechanism.** Intersect the model's next-token distribution with a DFA/CFG of the target grammar at inference time; malformed output becomes unrepresentable (outlines, XGrammar, structured outputs APIs).
-**Analysis.** Proven (structured outputs in all major inference stacks). Baseline-tier for estate agent tool calls (clawdius). Refuse nowhere for schema-validated generation; it is strictly cheaper than retry loops.
+**Analysis.** Proven (structured outputs in all major inference stacks). Baseline-tier for estate agent tool calls (no named implementor yet; the clawdius association was wrong: raw completions, no schema constraint -- drift-check caught it, 2026-11-20). Refuse nowhere for schema-validated generation; it is strictly cheaper than retry loops.; (clawdius: n/a)
 **Links.** P37 (repairs the residual semantic failures grammar cannot express); T49 (verification closes the loop).
 
 ### T49 · Stochastic generator + deterministic verifier loops
@@ -48,5 +48,5 @@ stochastic engines.
 ### T50 · Schema-bound agentic capability sandboxes
 **Failure.** Probabilistic agent loops mutate real systems on LLM judgment; one hallucinated parameter is a production incident.
 **Mechanism.** Wrap the reasoning loop in a deterministic FSM: every external action passes schema validation, OCap permission checks (T8), and a deterministic rollback path before commit.
-**Analysis.** Proven as architecture (every serious agent framework converges here); the pattern is the *invariant*, not a library. Baseline-tier for estate agents (clawdius, bot-kit). Refuse nowhere for agents with write access. (clawdius: adopted)
+**Analysis.** Proven as architecture (every serious agent framework converges here); the pattern is the *invariant*, not a library. Baseline-tier for estate agents; clawdius is the reference implementor (capability-gated MCP gateway, SandboxLevel executor, Lean-verified invariants). bot-kit does not implement it (drift-check caught that association, 2026-11-20). Refuse nowhere for agents with write access.; (clawdius: adopted); (bot-kit: n/a)
 **Links.** P31 (prompt quarantine feeds it clean inputs), P36 (CoW dry-runs are its staging tier), P40 (budget attenuation caps its reach), X6 (stopping rules bound its runtime).

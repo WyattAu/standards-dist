@@ -42,7 +42,7 @@ primitives rather than implicit side effects.
 ### T27 · Double-entry immutable ledger
 **Failure.** `balance` columns drift under races and bugs; no structural way to prove conservation.
 **Mechanism.** Paired append-only entries where every mutation nets to zero (`Σ debits + Σ credits = 0`); balances are derived sums, never stored as authority.
-**Analysis.** Proven (500 years of accounting; TigerBeetle as the modern engineered form). Baseline-tier for anything moving value in the estate; billing-kit, accounting-spec. Refuse nowhere for money; extend to inventory/quota via P17-style tokens. (accounting-spec: adopted)
+**Analysis.** Proven (500 years of accounting; TigerBeetle as the modern engineered form). Baseline-tier for anything moving value in the estate; accounting-spec (X4 Lean model is the truth source). billing-kit is value-adjacent only (T27 n/a: decimal arithmetic, no ledger surface; drift-check caught the association, 2026-11-20). Refuse nowhere for value; extend to inventory/quota via P17-style tokens. (accounting-spec: adopted); (billing-kit: n/a)
 **Links.** P11 (remainder-preserving partition allocates the entries); X5 (gauge-symmetric operators generalize conservation to any conserved quantity).
 
 ### T28 · Content-addressed Merkle DAGs

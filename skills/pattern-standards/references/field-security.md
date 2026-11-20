@@ -6,7 +6,7 @@ vigilance always eventually fails.
 ### P41 · Type-injected tenant RLS scopes
 **Failure.** IDOR happens the day one developer forgets `WHERE tenant_id = ?` in a new query.
 **Mechanism.** Repository handles instantiate only from a signed `TenantCapability` that binds Postgres RLS session variables (or injects the AST predicate); cross-tenant queries are unrepresentable, not forbidden.
-**Analysis.** Proven (Postgres RLS itself; capability injection is common practice in multi-tenant SaaS). Baseline-tier for every estate multi-tenant service (accessctl is the reference). Refuse for single-tenant deployments.
+**Analysis.** Proven (Postgres RLS itself; capability injection is common practice in multi-tenant SaaS). Baseline-tier for every estate multi-tenant service (no named implementor yet; the accessctl association was wrong: it is a policy library with no tenant/DB surface -- drift-check caught it, 2026-11-20). Refuse for single-tenant deployments.; (accessctl: n/a)
 **Links.** T8 (capability shape); T46 (Datalog policy decides what the capability may ask).
 
 ### P42 · Wide-event tail-sampled accumulators

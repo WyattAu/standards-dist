@@ -25,7 +25,7 @@ to the T-series foundations appear per pattern.
 ### P4 · Taint-tracked redaction (`Sensitive<T, Policy>`)
 **Failure.** PII, keys, tokens leak into logs, Sentry breadcrumbs, and LLM prompts because sanitization depends on memory.
 **Mechanism.** Opaque wrapper whose `Display`/`Serialize` emits `[REDACTED]`; unwrapping requires a capability-checked sink (`logAudit(val, key)`). Taint flows through `Debug` derives and error chains.
-**Analysis.** Proven in security-conscious Rust/TS codebases (secrecy crates, redacted derives). Baseline-tier for estate services touching credentials or PII (argus, auditlog). Refuse nowhere in that class; the cost is one wrapper per language.
+**Analysis.** Proven in security-conscious Rust/TS codebases (secrecy crates, redacted derives). Baseline-tier for estate services touching credentials or PII (no named implementor yet; the argus/auditlog associations were wrong: both hold plain String secrets today -- drift-check caught them, 2026-11-20). Refuse nowhere in that class; the cost is one wrapper per language.; (argus: n/a); (auditlog: n/a)
 **Links.** T8 (the sink is a capability); P31 (the LLM prompt boundary must use the same wrapper).
 
 ### P5 · Generation-tagged patch channels

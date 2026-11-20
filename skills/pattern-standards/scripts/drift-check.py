@@ -73,7 +73,7 @@ def repo_status(repo: Path, pid: str) -> str | None:
     if not f.is_file():
         return None
     for line in f.read_text(errors="replace").split("\n"):
-        m = re.match(rf"^\|\s*{re.escape(pid)}\s*\|\s*(\w+)\s*\|", line)
+        m = re.match(rf"^\|\s*{re.escape(pid)}\s*\|\s*([a-z0-9][a-z0-9/-]*)\s*\|", line)
         if m:
             return m.group(1)
     return None

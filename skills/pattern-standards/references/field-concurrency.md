@@ -18,13 +18,13 @@ produce when left to developer discipline.
 ### P23 · Lexical `AbortScope` subscription guards
 **Failure.** Forgotten listeners, intervals, and WS handlers leak and fire ghost callbacks in long-lived processes.
 **Mechanism.** Every async subscription takes a parent `AbortScope` token; scope exit deterministically tears down the whole listener tree.
-**Analysis.** Proven (AbortController DOM standard; tokio shutdown tokens; T11 nurseries). Baseline-tier for estate long-lived processes (bot-kit, clawdius daemons). Refuse nowhere; the only cost is passing one token.
+**Analysis.** Proven (AbortController DOM standard; tokio shutdown tokens; T11 nurseries). Baseline-tier for estate long-lived processes (no named implementor yet; the bot-kit/clawdius daemon associations were wrong -- drift-check caught them, 2026-11-20). Refuse nowhere; the only cost is passing one token.; (bot-kit: n/a); (clawdius: n/a)
 **Links.** T11 (task lifetime twin); P30 (flight recorders attach per-scope).
 
 ### P24 · Success-refilled retry budgets
 **Failure.** Retries during a 10% brownout multiply traffic 5×; a blip becomes a self-inflicted total outage.
 **Mechanism.** Client-wide token bucket refilled *only* by successful responses; total retry amplification capped (e.g. ≤10% of good traffic); budget exhausted → fail fast.
-**Analysis.** Proven (Google SRE retry doctrine; finagle retry budgets). Baseline-tier in breaker and all estate HTTP clients. Refuse nowhere for network clients.
+**Analysis.** Proven (Google SRE retry doctrine; finagle retry budgets). Baseline-tier for all estate HTTP clients (no named implementor yet; the breaker association was wrong: its BackoffStrategy is P51's circuit-open wait, not a retry budget -- drift-check caught it, 2026-11-20). Refuse nowhere for network clients.; (breaker: n/a)
 **Links.** breaker's circuit state; T35 (server-side admission control is the other half of the contract); T33 (idempotency makes retries safe, this makes them bounded).
 
 ### P25 · Request-scoped arena allocators
