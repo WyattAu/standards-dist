@@ -1,0 +1,270 @@
+[
+ {
+  "task": "add cursor pagination to the orders list endpoint",
+  "expect": [
+   "N01"
+  ]
+ },
+ {
+  "task": "paginated admin table over a multi-tenant audit log",
+  "expect": [
+   "N01",
+   "N10"
+  ]
+ },
+ {
+  "task": "create a POST endpoint that updates user profiles",
+  "expect": [
+   "N02"
+  ]
+ },
+ {
+  "task": "split an invoice total into fee shares",
+  "expect": [
+   "N03"
+  ]
+ },
+ {
+  "task": "orchestrate a multi-service order fulfillment workflow",
+  "expect": [
+   "N04"
+  ]
+ },
+ {
+  "task": "make the LLM tool call output schema-safe with a repair loop",
+  "expect": [
+   "N05"
+  ]
+ },
+ {
+  "task": "cache the product catalog with caller-declared staleness",
+  "expect": [
+   "N06"
+  ]
+ },
+ {
+  "task": "outbound HTTP client for the shipping API with retries",
+  "expect": [
+   "N07"
+  ]
+ },
+ {
+  "task": "shared worker pool serves three tenants with fairness",
+  "expect": [
+   "N08"
+  ]
+ },
+ {
+  "task": "recurring weekly appointment scheduling with DST rules",
+  "expect": [
+   "N09"
+  ]
+ },
+ {
+  "task": "tenant data access with role delegation checks",
+  "expect": [
+   "N10"
+  ]
+ },
+ {
+  "task": "set up structured logs and SLO paging for the service",
+  "expect": [
+   "N11"
+  ]
+ },
+ {
+  "task": "add a feature flag with an expiry for the beta",
+  "expect": [
+   "N12"
+  ]
+ },
+ {
+  "task": "migrate the users table schema with expand-contract",
+  "expect": [
+   "N13"
+  ]
+ },
+ {
+  "task": "optimistic UI updates for the kanban board",
+  "expect": [
+   "N14"
+  ]
+ },
+ {
+  "task": "deterministic matrix reduction for the backtest kernel",
+  "expect": [
+   "N15"
+  ]
+ },
+ {
+  "task": "multi-master replicated state with leader fencing",
+  "expect": [
+   "N16"
+  ]
+ },
+ {
+  "task": "bootstrap a new repo for the pricing service",
+  "expect": [
+   "N17"
+  ]
+ },
+ {
+  "task": "throttle the scraping endpoint under overload",
+  "expect": [
+   "N18"
+  ]
+ },
+ {
+  "task": "receive GitHub webhooks with signature verification",
+  "expect": [
+   "N19"
+  ]
+ },
+ {
+  "task": "backfill the denormalized stats for 10M rows",
+  "expect": [
+   "N20"
+  ]
+ },
+ {
+  "task": "strangle the legacy auth path behind a facade",
+  "expect": [
+   "N21"
+  ]
+ },
+ {
+  "task": "design the test suite for the parser module",
+  "expect": [
+   "N22"
+  ]
+ },
+ {
+  "task": "design the public error shape and list filters for the API",
+  "expect": [
+   "N23"
+  ]
+ },
+ {
+  "task": "ship the new release with canary analysis",
+  "expect": [
+   "N24"
+  ]
+ },
+ {
+  "task": "store PII for GDPR delete-your-data requests",
+  "expect": [
+   "N25"
+  ]
+ },
+ {
+  "task": "execute large parent orders across venues safely",
+  "expect": [
+   "N26"
+  ]
+ },
+ {
+  "task": "replace static API keys with workload identity",
+  "expect": [
+   "N27"
+  ]
+ },
+ {
+  "task": "keep checkout serving when the recommender dies",
+  "expect": [
+   "N28"
+  ]
+ },
+ {
+  "task": "rehearse the full deploy sequence before the launch",
+  "expect": [
+   "N29"
+  ]
+ },
+ {
+  "task": "the downstream call hangs and nothing times out",
+  "expect": [
+   "N30"
+  ]
+ },
+ {
+  "task": "publish the nightly aggregates dataset with freshness checks",
+  "expect": [
+   "N31"
+  ]
+ },
+ {
+  "task": "split a restaurant bill among friends, store shares, charge retry-safe",
+  "expect": [
+   "N03"
+  ]
+ },
+ {
+  "task": "an agent workflow that reads support emails and issues refunds",
+  "expect": [
+   "N05",
+   "N04",
+   "N03"
+  ]
+ },
+ {
+  "task": "rewrite the billing ingest path",
+  "expect": [
+   "N13",
+   "N21"
+  ]
+ },
+ {
+  "task": " money movement with ledger entries and unit-safe shares",
+  "expect": [
+   "N03"
+  ]
+ },
+ {
+  "task": "replicas disagree after a network partition heals",
+  "expect": [
+   "N16"
+  ]
+ },
+ {
+  "task": "multi-region replicated state with fencing and causal reads",
+  "expect": [
+   "N16"
+  ]
+ },
+ {
+  "task": "publish domain events reliably alongside database writes",
+  "expect": [
+   "N04"
+  ]
+ },
+ {
+  "task": "prompt injection defense for the doc summarizer",
+  "expect": [
+   "N05"
+  ]
+ },
+ {
+  "task": "hash-addressed artifacts with attestations",
+  "expect": [
+   "N24"
+  ]
+ },
+ {
+  "task": "blue-green flip with instant revert",
+  "expect": [
+   "N24"
+  ]
+ },
+ {
+  "task": "authorizations with delegation chains and quotas",
+  "expect": [
+   "N10"
+  ]
+ },
+ {
+  "task": "usage metering quotas per tenant",
+  "expect": [
+   "N03"
+  ]
+ }
+]

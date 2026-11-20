@@ -51,3 +51,11 @@ the cumulative evidence.
 A standards canon carries no runtime patterns; it declares itself with
 a leading `<!-- adoption: canon -->` marker and an empty table. The
 checker passes with a note instead of requiring rows.
+
+## Drafting with route.py --adopt
+
+For a repo matching a decision-graph node, `scripts/route.py --adopt <NODE>
+--repo <path>` drafts `PATTERN_ADOPTION.md` with that node's mandatory
+set as `planned` rows (idempotent; existing rows are kept). The drafter
+does not verify against code: promote rows to `adopted` only with real
+evidence paths per the rules above, and delete rows the code refutes.

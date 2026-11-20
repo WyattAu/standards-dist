@@ -66,7 +66,10 @@ mkdir -p skills/pattern-standards/references
 cp "$PATTERN_CANON/PATTERN-CORE.md" skills/pattern-standards/references/
 cp "$PATTERN_CANON"/references/*.md skills/pattern-standards/references/
 mkdir -p skills/pattern-standards/scripts
-cp "$PATTERN_CANON/scripts/route.py" skills/pattern-standards/scripts/route.py
+mkdir -p skills/pattern-standards/scripts
+for f in route.py route-eval.json adoption-check.py drift-check.py; do
+  cp "$PATTERN_CANON/scripts/$f" skills/pattern-standards/scripts/$f
+done
 CONTEXT_REV=$(pin "$CONTEXT_CANON")
 mkdir -p skills/context-standards/references
 cp "$CONTEXT_CANON/CONTEXT-CORE.md" skills/context-standards/references/

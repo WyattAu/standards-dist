@@ -73,6 +73,8 @@ def main() -> int:
     ap.add_argument("--node")
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--eval", nargs="?", const="scripts/route-eval.json", default=None)
+    ap.add_argument("--adopt", metavar="NODE", help="draft PATTERN_ADOPTION.md rows for a node's M set")
+    ap.add_argument("--repo", help="repo root for --adopt (default: cwd)")
     ap.add_argument("--graph", default=str(DEFAULT_GRAPH))
     args = ap.parse_args()
     graph = Path(args.graph)
@@ -113,6 +115,36 @@ def main() -> int:
                 print(f"FAIL {task!r}: expect {sorted(expect)}, emitted {sorted(emitted)} (top {top[1]} score {top[0]})")
         print(f"route-eval: {len(cases) - fails}/{len(cases)} pass")
         return 1 if fails else 0
+    if args.adopt:
+        if args.adopt not in nodes:
+            print(f"route: unknown node {args.adopt}", file=sys.stderr)
+            return 2
+        repo = Path(args.repo) if args.repo else Path.cwd()
+        n = nodes[args.adopt]
+        target = repo / "PATTERN_ADOPTION.md"
+        existing = target.read_text(encoding="utf-8") if target.is_file() else ""
+        pids = sorted(set(re.findall(r"[TPX]\d+", n["M"])))
+        new_rows = []
+        for pid in pids:
+            if f"| {pid} |" not in existing:
+                new_rows.append(f"| {pid} | planned | todo (route.py --adopt {args.adopt} draft; verify against code before promoting) |")
+        if not new_rows:
+            print(f"route: all M-set patterns for {args.adopt} already declared in {target}")
+            return 0
+        if not existing:
+            header = (f"# PATTERN_ADOPTION: {repo.name}\n\n"
+                      "Relationship to the WyattAu pattern canon "
+                      "(`github.com/WyattAu/pattern-standards`), validated by "
+                      "`scripts/adoption-check.py` per `references/adoption-format.md`. "
+                      f"Drafted by `route.py --adopt {args.adopt}`; verify each row "
+                      "against the code before promoting.\n\n"
+                      "| Pattern | Status | Evidence |\n|---|---|---|\n")
+        else:
+            header = ""
+        target.write_text(header + "\n".join(new_rows) + "\n", encoding="utf-8")
+        print(f"route: drafted {len(new_rows)} row(s) into {target} for node {args.adopt}")
+        print("verify each row against the code, then promote statuses and fill evidence")
+        return 0
     if args.task:
         scored = score(nodes, args.task)
         top, runner_up = scored[0], scored[1] if len(scored) > 1 else (0, "")
