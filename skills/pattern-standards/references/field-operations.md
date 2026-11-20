@@ -7,7 +7,7 @@ them, not the pattern being wrong.
 ### P51 · Circuit breaker
 **Failure.** A down dependency turns every caller into a retry machine; wasted work and connection storms widen the outage.
 **Mechanism.** Per-dependency state machine: closed (normal) trips open on the failure-rate threshold, open fails fast with no network, half-open probes with bounded concurrency. Trip and reset decisions consume the same signals as P24 budgets.
-**Analysis.** Proven (Nygard, "Release It!"; resilience4j; the estate's `breaker` kit). Baseline-tier next to P24 for all outbound clients. Refuse nowhere for network calls; the only design choice is the fallback value when open.
+**Analysis.** Proven (Nygard, "Release It!"; resilience4j; the estate's `breaker` kit). Baseline-tier next to P24 for all outbound clients. Refuse nowhere for network calls; the only design choice is the fallback value when open. (breaker: adopted)
 **Links.** P24 (retry budget feeds the trip decision), T35 (the server-side twin), P52 (bulkheads partition what the breaker guards).
 
 ### P52 · Bulkhead isolation

@@ -30,7 +30,7 @@ vigilance always eventually fails.
 ### P45 · Multi-window SLO burn-rate gates
 **Failure.** Static thresholds (`CPU > 80%`) page on brief self-healing spikes; alert fatigue trains engineers to ignore pages.
 **Mechanism.** Paging fires only on dual-window error-budget burn velocity: e.g. 2% of the 30-day budget burned in 1h **and** confirmed over 5m (Google SRE workbook multi-window, multi-burn).
-**Analysis.** Proven (SRE workbook ch. 5; adopted industry-wide). Baseline-tier for estate monitoring (argus). Refuse for single-instance dev boxes.
+**Analysis.** Proven (SRE workbook ch. 5; adopted industry-wide). Baseline-tier for estate monitoring (argus: planned, pending the SLO stream its PATTERN_ADOPTION records as absent). Refuse for single-instance dev boxes. (argus: planned)
 **Links.** P42 (wide events are the signal); T35 (adaptive limits act where burn-rate alerts page).
 
 ### P46 · Static dependency capability manifests

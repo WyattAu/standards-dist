@@ -48,5 +48,5 @@ stochastic engines.
 ### T50 · Schema-bound agentic capability sandboxes
 **Failure.** Probabilistic agent loops mutate real systems on LLM judgment; one hallucinated parameter is a production incident.
 **Mechanism.** Wrap the reasoning loop in a deterministic FSM: every external action passes schema validation, OCap permission checks (T8), and a deterministic rollback path before commit.
-**Analysis.** Proven as architecture (every serious agent framework converges here); the pattern is the *invariant*, not a library. Baseline-tier for estate agents (clawdius, bot-kit). Refuse nowhere for agents with write access.
+**Analysis.** Proven as architecture (every serious agent framework converges here); the pattern is the *invariant*, not a library. Baseline-tier for estate agents (clawdius, bot-kit). Refuse nowhere for agents with write access. (clawdius: adopted)
 **Links.** P31 (prompt quarantine feeds it clean inputs), P36 (CoW dry-runs are its staging tier), P40 (budget attenuation caps its reach), X6 (stopping rules bound its runtime).

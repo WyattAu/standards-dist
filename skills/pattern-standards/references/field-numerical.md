@@ -6,7 +6,7 @@ numerical corruption outranks every other failure class.
 ### P11 · Remainder-preserving partition operators
 **Failure.** `amount * weight` splits lose or create pennies: `sum(shares) ≠ total` after naive division and rounding.
 **Mechanism.** One algebraic primitive `partition(Total, Weights) -> Shares` using largest-remainder (Hamilton) allocation with the residual assigned by deterministic rank; conservation `Σ Sharesᵢ = Total` holds at the atomic sub-unit, every call.
-**Analysis.** Proven (apportionment mathematics older than software; standard in billing systems). Baseline-tier for billing-kit fee/inventory splits. Refuse nowhere money divides; integer minor-units only, never floats.
+**Analysis.** Proven (apportionment mathematics older than software; standard in billing systems). Baseline-tier for billing-kit fee/inventory splits (billing-kit adoption: planned 0.3.0, REQ-BL-002 proration, per its PATTERN_ADOPTION; ledger-kit moves whole amounts and does not partition). Refuse nowhere money divides; integer minor-units only, never floats. (money: adopted); (billing-kit: planned)
 **Links.** T27 (the ledger entries the shares produce); P12 (units prevent feeding the wrong scale into the weights).
 
 ### P12 · Phantom dimensional algebra (`Qty<Unit, Scale>`)

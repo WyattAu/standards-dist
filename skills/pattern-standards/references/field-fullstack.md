@@ -49,7 +49,7 @@ to the T-series foundations appear per pattern.
 ### P8 · Dual-frame temporal anchors
 **Failure.** Future recurring events stored as UTC instants break by an hour when governments change DST rules.
 **Mechanism.** Persist `(WallTime, IANA_Zone, RecurrenceRule)`; materialize concrete UTC instants lazily via current tzdata at query time. The stored fact is the civil intent, not an instant.
-**Analysis.** Proven doctrine (calendar-standard advice; iCalendar RRULE + TZID shape). Baseline-tier in cal-model for all future scheduling. Refuse for past events; record the actual instant that occurred.
+**Analysis.** Proven doctrine (calendar-standard advice; iCalendar RRULE + TZID shape). Baseline-tier for all future estate scheduling; no dedicated calendar crate exists yet (cal-model is A2L automotive calibration, a different domain; drift-check caught this association, 2026-11-18). Refuse for past events; record the actual instant that occurred. (cal-model: refused)
 **Links.** P13 (as-of joins decide which tzdata version answered).
 
 ### P9 · Thin-ping pull webhooks
