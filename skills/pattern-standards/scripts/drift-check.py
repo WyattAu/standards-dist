@@ -84,11 +84,11 @@ def main() -> int:
     ap.add_argument("--canon", default=".")
     ap.add_argument("--repos-root", default=os.path.expanduser("~/dev/src/github.com/WyattAu"))
     ap.add_argument("--strict", action="store_true", help="MISSING (undeclared) repos also fail")
+    ap.add_argument("--draft", metavar="OUT", help="write ready-to-apply canon correction drafts for found drifts")
     a = ap.parse_args()
     canon = Path(a.canon).resolve()
     repos_root = Path(a.repos_root).resolve()
-
-    repos_root = Path(a.repos_root).resolve()
+    drafts = []
     known_repos = {d.name for d in repos_root.iterdir() if d.is_dir()}
     claims = canon_repo_claims(canon, known_repos)
     if not claims:
@@ -112,11 +112,20 @@ def main() -> int:
         inline = inline_status(line, repo)
         if inline is None:
             drifts.append(f"{repo}: baseline claim for {pid} ({ref}) lacks an inline status annotation '(repo: status)'")
+            drafts.append((repo, pid, ref, f"({repo}: {status})"))
         elif inline.lower() != status.lower():
             drifts.append(f"{repo}: claim annotation {inline!r} != declared {status!r} for {pid} ({ref})")
+            drafts.append((repo, pid, ref, f"({repo}: {status})"))
         elif kind == "target" and status == "refused":
             drifts.append(f"{repo}: canon targets {pid} ({ref}) but repo refuses it")
 
+    if a.draft and drafts:
+        out = []
+        for repo, pid, ref, ann in drafts:
+            fname, _, lineno = ref.rpartition(":")
+            out.append(f"# {repo} {pid}: append '{ann}' to line {lineno} of {fname}")
+        Path(a.draft).write_text("\n".join(out) + "\n", encoding="utf-8")
+        print(f"drift-check: drafts written to {a.draft}")
     for d in drifts:
         print(f"DRIFT {d}")
     for m in missing:

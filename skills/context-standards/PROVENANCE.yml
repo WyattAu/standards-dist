@@ -1,4 +1,4 @@
 source: WyattAu/context-standards
 rev: 1269e76
 vendored: [references/CONTEXT-CORE.md, references/routing-contract.md, references/artifact-formats.md, scripts/context-audit.py]
-rebuilt: "2026-11-20T00:53:08Z by build.sh"
+rebuilt: "2026-11-20T00:59:21Z by build.sh"
